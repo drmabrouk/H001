@@ -15,10 +15,16 @@
             $('.healthedia-mobile-nav').toggleClass('healthedia-open');
         });
 
+        $('.healthedia-mobile-toggle-new').on('click', function(e) {
+            e.preventDefault();
+            $('.healthedia-mobile-nav-new').toggleClass('healthedia-open');
+        });
+
         // Close mobile nav when clicking outside
         $(document).on('click', function(e) {
-            if (!$(e.target).closest('.healthedia-header').length) {
+            if (!$(e.target).closest('.healthedia-header').length && !$(e.target).closest('.healthedia-header-new').length) {
                 $('.healthedia-mobile-nav').removeClass('healthedia-open');
+                $('.healthedia-mobile-nav-new').removeClass('healthedia-open');
             }
         });
 

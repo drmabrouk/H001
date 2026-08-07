@@ -1,5 +1,5 @@
 /**
- * Healthedia Public Stylesheet
+ * Healthedia Sports Medicine Journal Public Stylesheet
  * Complete styles for the Unified Header, Footer, Dashboard, and Authentication views.
  */
 
@@ -26,7 +26,7 @@
 }
 
 /* ==========================================
-   HIDE NATIVE THEME HEADERS & FOOTERS (Astra, etc.)
+   HIDE NATIVE THEME HEADERS & FOOTERS
    ========================================== */
 #masthead,
 .site-header,
@@ -43,9 +43,9 @@ footer.site-footer,
     display: none !important;
 }
 
-/* Base resets & styles for Healthedia components */
-.healthedia-header,
-.healthedia-footer,
+/* Standalone container resets */
+.healthedia-header-new,
+.healthedia-footer-new,
 .healthedia-auth-page-wrapper,
 .healthedia-dashboard-page-wrapper {
     box-sizing: border-box;
@@ -54,211 +54,410 @@ footer.site-footer,
     -moz-osx-font-smoothing: grayscale;
 }
 
-.healthedia-header *,
-.healthedia-footer *,
+.healthedia-header-new *,
+.healthedia-footer-new *,
 .healthedia-auth-page-wrapper *,
 .healthedia-dashboard-page-wrapper * {
     box-sizing: border-box;
 }
 
 /* ==========================================
-   UNIFIED HEADER STYLING
+   HIGH-CONTRAST TOP NAVIGATION (HEADER)
    ========================================== */
-.healthedia-header {
+.healthedia-header-new {
     width: 100%;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--healthedia-border-color);
     position: sticky;
     top: 0;
     left: 0;
     z-index: 99999;
-    padding: 16px 24px;
-    box-shadow: var(--healthedia-shadow-sm);
+    padding: 0 32px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.015);
 }
 
-.healthedia-header-container {
+.healthedia-header-container-new {
+    width: 100%;
     max-width: 1440px;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 20px;
 }
 
-/* Logo block */
-.healthedia-logo-block {
+/* Far Left: Branding Badge */
+.healthedia-branding-badge {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.healthedia-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none !important;
+    color: inherit !important;
+    outline: none;
+}
+
+.healthedia-editorial-emblem {
+    width: 42px;
+    height: 42px;
+    background: #000000;
+    color: #ffffff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.healthedia-editorial-emblem svg {
+    width: 22px;
+    height: 22px;
+}
+
+.healthedia-brand-details {
     display: flex;
     flex-direction: column;
-    text-decoration: none !important;
-    color: var(--healthedia-text-dark) !important;
-    outline: none;
+    justify-content: center;
+}
+
+.healthedia-brand-journal-title {
+    font-family: var(--healthedia-font-display);
+    font-size: 15px;
+    font-weight: 800;
+    color: #000000;
+    letter-spacing: -0.3px;
     line-height: 1.2;
 }
 
-.healthedia-logo-title {
-    font-family: var(--healthedia-font-display);
-    font-size: 24px;
-    font-weight: 800;
-    color: #000000;
-    letter-spacing: -0.5px;
+.healthedia-brand-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
 }
 
-.healthedia-logo-sub {
-    font-family: var(--healthedia-font-display);
-    font-size: 8px;
+.healthedia-brand-issn {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--healthedia-text-muted);
+}
+
+.healthedia-brand-divider {
+    font-size: 10px;
+    color: var(--healthedia-border-color);
+}
+
+.healthedia-brand-accreditation {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 9px;
     font-weight: 700;
-    color: var(--healthedia-text-light);
-    letter-spacing: 1.5px;
-    margin-top: 2px;
+    color: #10b981;
+    background-color: #ecfdf5;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
-/* Desktop nav */
-.healthedia-nav {
+.healthedia-brand-accreditation svg {
+    width: 10px;
+    height: 10px;
+}
+
+/* Center: Primary Navigation Menu */
+.healthedia-nav-new {
     display: flex;
     align-items: center;
 }
 
-.healthedia-nav-list {
+.healthedia-nav-list-new {
     display: flex;
     align-items: center;
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 8px;
+    gap: 4px;
 }
 
-.healthedia-nav-item {
+.healthedia-nav-list-new li {
     margin: 0;
     padding: 0;
+    position: relative;
 }
 
-.healthedia-nav-link {
+.healthedia-link-new {
     display: inline-block;
-    padding: 10px 20px;
+    padding: 28px 12px;
     font-family: var(--healthedia-font-sans);
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 500;
     color: var(--healthedia-text-muted) !important;
     text-decoration: none !important;
-    border-radius: 9999px;
     transition: all 0.2s ease-in-out;
+    position: relative;
+    border-bottom: 2px solid transparent;
 }
 
-.healthedia-nav-link:hover {
+.healthedia-link-new:hover {
     color: #000000 !important;
-    background-color: var(--healthedia-bg-light);
 }
 
-/* Active style (black pill background) */
-.healthedia-nav-link.healthedia-active {
-    background-color: #000000 !important;
-    color: #ffffff !important;
+/* Active Indicator Lines */
+.healthedia-link-new.healthedia-active-new,
+.healthedia-link-new:hover {
+    border-bottom: 2px solid #000000;
+    color: #000000 !important;
     font-weight: 600;
 }
 
-/* Auth Action Button */
-.healthedia-auth-action {
-    display: flex;
-    align-items: center;
-}
-
-.healthedia-login-btn {
-    display: inline-block;
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    font-family: var(--healthedia-font-sans);
-    font-size: 13px;
-    font-weight: 700;
-    text-decoration: none !important;
-    padding: 12px 28px;
-    border-radius: 9999px;
-    letter-spacing: 0.8px;
-    transition: all 0.2s ease-in-out;
-    border: 1px solid transparent;
-}
-
-.healthedia-login-btn:hover {
-    background-color: var(--healthedia-primary-hover) !important;
-    transform: translateY(-1px);
-}
-
-.healthedia-user-menu-wrapper {
+/* Right Side Elements */
+.healthedia-header-right-new {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.healthedia-dashboard-badge {
-    border: 1px solid var(--healthedia-border-color);
-    background-color: #ffffff;
-    font-weight: 600;
+/* Integrated global search field */
+.healthedia-quick-search {
+    display: flex;
+    align-items: center;
+    background-color: #f1f5f9;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 6px 12px;
+    width: 180px;
+    transition: all 0.2s;
+    position: relative;
 }
 
-.healthedia-logout-btn {
+.healthedia-quick-search:focus-within {
+    width: 220px;
+    background-color: #ffffff;
+    border-color: #000000;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.03);
+}
+
+.healthedia-search-icon-new {
+    width: 14px;
+    height: 14px;
+    color: #64748b;
+    margin-right: 8px;
+}
+
+.healthedia-search-input-new {
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 12px;
+    font-family: var(--healthedia-font-sans);
+    color: #000000;
+    width: 100%;
+}
+
+.healthedia-search-shortcut {
+    background-color: #e2e8f0;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    position: absolute;
+    right: 8px;
+    pointer-events: none;
+}
+
+/* Icon Buttons */
+.healthedia-icon-btn-new {
+    background: none;
+    border: 1px solid var(--healthedia-border-color);
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    border: 1px solid var(--healthedia-border-color);
     color: var(--healthedia-text-muted);
+    cursor: pointer;
     transition: all 0.2s;
-    background: #ffffff;
+    outline: none;
+    position: relative;
 }
 
-.healthedia-logout-btn:hover {
-    color: #ef4444;
-    border-color: #fca5a5;
-    background-color: #fef2f2;
+.healthedia-icon-btn-new:hover {
+    color: #000000;
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
 }
 
-.healthedia-logout-icon {
+.healthedia-shortcut-trigger {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.healthedia-bell-icon {
     width: 18px;
     height: 18px;
 }
 
-/* Mobile Toggle */
-.healthedia-mobile-toggle {
+.healthedia-bell-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: #ef4444;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+}
+
+/* User Profile Avatar with Role Badge */
+.healthedia-user-block-new {
+    display: flex;
+    align-items: center;
+}
+
+.healthedia-login-btn-new {
+    display: inline-block;
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    font-family: var(--healthedia-font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none !important;
+    padding: 10px 22px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+}
+
+.healthedia-login-btn-new:hover {
+    background-color: var(--healthedia-primary-hover) !important;
+}
+
+.healthedia-avatar-wrapper-new {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--healthedia-border-color);
+    padding: 4px 10px;
+    border-radius: 12px;
+    background-color: #ffffff;
+}
+
+.healthedia-avatar-trigger-new {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+.healthedia-avatar-img-new {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    color: #000000;
+    font-weight: 700;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #cbd5e1;
+}
+
+.healthedia-user-role-badge {
+    font-size: 9px;
+    font-weight: 800;
+    background-color: #f1f5f9;
+    color: var(--healthedia-text-dark);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+}
+
+.healthedia-header-logout-btn-new {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--healthedia-text-light);
+    transition: color 0.2s;
+    padding: 4px;
+}
+
+.healthedia-header-logout-btn-new:hover {
+    color: #ef4444;
+}
+
+.healthedia-header-logout-btn-new svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Mobile Toggle Trigger */
+.healthedia-mobile-toggle-new {
     display: none;
     background: none;
-    border: none;
-    color: var(--healthedia-text-dark);
+    border: 1px solid var(--healthedia-border-color);
+    border-radius: 10px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    padding: 8px;
+    color: #000000;
     outline: none;
 }
 
-.healthedia-menu-icon {
-    width: 24px;
-    height: 24px;
+.healthedia-mobile-toggle-new svg {
+    width: 20px;
+    height: 20px;
 }
 
-/* Mobile Nav Drawer */
-.healthedia-mobile-nav {
+/* Mobile responsive navigation drawer */
+.healthedia-mobile-nav-new {
     display: none;
     background: #ffffff;
     border-top: 1px solid var(--healthedia-border-color);
-    padding: 16px 24px;
+    padding: 16px 32px;
     position: absolute;
-    top: 100%;
+    top: 80px;
     left: 0;
     width: 100%;
     box-shadow: var(--healthedia-shadow-lg);
 }
 
-.healthedia-mobile-nav-list {
+.healthedia-mobile-nav-list-new {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
-.healthedia-mobile-link {
+.healthedia-mobile-link-new {
     display: block;
     padding: 10px 16px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--healthedia-text-muted) !important;
     text-decoration: none !important;
@@ -266,13 +465,19 @@ footer.site-footer,
     transition: all 0.2s;
 }
 
-.healthedia-mobile-link:hover,
-.healthedia-mobile-link.healthedia-active {
+.healthedia-mobile-link-new:hover,
+.healthedia-mobile-link-new.healthedia-active-new {
     background-color: var(--healthedia-bg-light);
     color: #000000 !important;
 }
 
-.healthedia-mobile-link-login {
+.healthedia-mobile-link-new.highlight-dashboard {
+    font-weight: 700;
+    color: var(--healthedia-accent-blue) !important;
+    border-left: 3px solid var(--healthedia-accent-blue);
+}
+
+.healthedia-mobile-link-login-new {
     display: block;
     text-align: center;
     background-color: #000000;
@@ -281,21 +486,168 @@ footer.site-footer,
     border-radius: 8px;
     text-decoration: none !important;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
 }
+
+/* Responsive headers */
+@media (max-width: 1200px) {
+    .healthedia-quick-search {
+        display: none;
+    }
+}
+
+@media (max-width: 1024px) {
+    .healthedia-nav-new {
+        display: none;
+    }
+    .healthedia-mobile-toggle-new {
+        display: flex;
+    }
+    .healthedia-mobile-nav-new.healthedia-open {
+        display: block;
+    }
+}
+
 
 /* ==========================================
-   UNIFIED FOOTER STYLING
+   DARK, STRUCTURED MULTI-COLUMN EDITORIAL FOOTER
    ========================================== */
-.healthedia-footer {
+.healthedia-footer-new {
     width: 100%;
-    background: #ffffff;
-    border-top: 1px solid var(--healthedia-border-color);
-    padding: 24px;
-    margin-top: auto;
+    background-color: #0c1524;
+    color: #94a3b8;
+    font-family: var(--healthedia-font-sans);
+    border-top: 1px solid #1e293b;
+    box-shadow: 0 -4px 30px rgba(0,0,0,0.03);
 }
 
-.healthedia-footer-container {
+.healthedia-footer-main {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 64px 32px;
+}
+
+.healthedia-footer-grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(5, 1.2fr);
+    gap: 32px;
+}
+
+/* Brand Section Column */
+.healthedia-footer-brand-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.healthedia-footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.emblem-light {
+    background: #ffffff !important;
+    color: #0c1524 !important;
+}
+
+.healthedia-footer-brand-title {
+    font-family: var(--healthedia-font-display);
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.4px;
+}
+
+.healthedia-footer-mission {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #64748b;
+    margin: 0;
+}
+
+.healthedia-footer-meta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.healthedia-meta-item {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.healthedia-meta-item .meta-label {
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.healthedia-meta-item .meta-value {
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+.healthedia-meta-item .text-blue {
+    color: #38bdf8 !important;
+}
+
+/* Menu Column Layouts */
+.healthedia-footer-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.healthedia-footer-heading-new {
+    font-family: var(--healthedia-font-display);
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 0 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1e293b;
+}
+
+.healthedia-footer-links-new {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.healthedia-footer-links-new li {
+    margin: 0;
+    padding: 0;
+}
+
+.healthedia-footer-links-new a {
+    font-size: 12.5px;
+    color: #94a3b8;
+    text-decoration: none !important;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.healthedia-footer-links-new a:hover {
+    color: #ffffff;
+}
+
+/* Bottom Utility Strip */
+.healthedia-footer-bottom {
+    background-color: #090f1a;
+    border-top: 1px solid #111a2e;
+    padding: 24px 32px;
+}
+
+.healthedia-footer-bottom-container {
     max-width: 1440px;
     margin: 0 auto;
     display: flex;
@@ -305,62 +657,128 @@ footer.site-footer,
     gap: 16px;
 }
 
-.healthedia-footer-copyright {
-    font-family: var(--healthedia-font-sans);
-    font-size: 13px;
-    color: var(--healthedia-text-muted);
-}
-
-.healthedia-footer-links {
+.healthedia-footer-bottom-left {
     display: flex;
     align-items: center;
     gap: 12px;
-    flex-wrap: wrap;
 }
 
-.healthedia-footer-link {
-    font-family: var(--healthedia-font-sans);
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--healthedia-text-muted) !important;
-    text-decoration: none !important;
-    transition: color 0.2s;
+.healthedia-copyright-text-new {
+    font-size: 12px;
+    color: #475569;
 }
 
-.healthedia-footer-link:hover {
-    color: #000000 !important;
-}
-
-.healthedia-footer-separator {
-    color: var(--healthedia-text-light);
+.healthedia-footer-dot-divider {
+    color: #1e293b;
     font-size: 10px;
     user-select: none;
 }
 
-/* Responsive media queries */
-@media (max-width: 1024px) {
-    .healthedia-nav {
-        display: none;
+/* Dynamic system uptime indicator */
+.healthedia-uptime-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #475569;
+    font-weight: 600;
+}
+
+.uptime-green-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    display: inline-block;
+    animation: pulseUptime 2s infinite;
+}
+
+@keyframes pulseUptime {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Academic network icons as tags */
+.healthedia-academic-networks {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.network-badge-tag {
+    font-size: 10px;
+    font-weight: 800;
+    color: #475569;
+    border: 1px solid #111a2e;
+    background-color: #0c1524;
+    padding: 2px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* Bottom Right: legal, rss */
+.healthedia-footer-bottom-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.healthedia-bottom-link-new {
+    font-size: 12px;
+    color: #475569;
+    text-decoration: none !important;
+    transition: color 0.2s;
+}
+
+.healthedia-bottom-link-new:hover {
+    color: #cbd5e1;
+}
+
+.healthedia-rss-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #ea580c;
+    font-weight: 700;
+    text-decoration: none !important;
+}
+
+.healthedia-rss-link:hover {
+    color: #f97316;
+}
+
+.healthedia-rss-icon {
+    width: 14px;
+    height: 14px;
+}
+
+/* Responsive Footers */
+@media (max-width: 1100px) {
+    .healthedia-footer-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
     }
-    .healthedia-auth-action {
-        display: none;
-    }
-    .healthedia-mobile-toggle {
-        display: block;
-    }
-    .healthedia-mobile-nav.healthedia-open {
-        display: block;
+    .healthedia-footer-brand-section {
+        border-bottom: 1px solid #1e293b;
+        padding-bottom: 24px;
     }
 }
 
 @media (max-width: 768px) {
-    .healthedia-footer-container {
+    .healthedia-footer-bottom-container {
         flex-direction: column;
         align-items: center;
         text-align: center;
     }
-    .healthedia-footer-links {
-        justify-content: center;
-        gap: 8px;
+    .healthedia-footer-bottom-left {
+        flex-direction: column;
+        gap: 6px;
+    }
+    .healthedia-footer-dot-divider {
+        display: none;
     }
 }
