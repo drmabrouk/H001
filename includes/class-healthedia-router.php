@@ -15,7 +15,7 @@ function healthedia_template_redirect( $template ) {
         }
     }
 
-    if ( is_page( 'healthedia-auth' ) ) {
+    if ( is_page( 'login' ) ) {
         $custom_template = HEALTHEDIA_PATH . 'templates/auth.php';
         if ( file_exists( $custom_template ) ) {
             return $custom_template;
