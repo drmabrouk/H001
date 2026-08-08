@@ -339,31 +339,75 @@ function healthedia_get_header() {
             color: #bf271b;
         }
 
-        /* Mobile layout */
+        /* Mobile layout optimization */
         @media (max-width: 768px) {
             .healthedia-header-container {
-                border-radius: 25px;
+                border-radius: 20px;
                 height: auto;
                 padding: 12px 16px;
-                flex-direction: column;
-                gap: 12px;
+                display: grid !important;
+                grid-template-columns: 1fr auto !important;
+                grid-template-rows: auto auto !important;
+                row-gap: 12px;
+                column-gap: 8px;
+                align-items: center;
             }
             .healthedia-header-left-group {
-                flex-direction: column;
-                gap: 12px;
+                display: contents !important;
+            }
+            .healthedia-logo-group {
+                grid-column: 1 / 2;
+                grid-row: 1 / 2;
+                justify-self: start;
+            }
+            .healthedia-auth-btn-wrapper {
+                grid-column: 2 / 3;
+                grid-row: 1 / 2;
+                justify-self: end;
             }
             .healthedia-nav {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 8px;
+                grid-column: 1 / 3;
+                grid-row: 2 / 3;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+                gap: 6px;
+                overflow-x: auto;
+                white-space: nowrap;
+                width: 100%;
+                padding: 4px 0 6px 0;
+                -webkit-overflow-scrolling: touch;
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+            .healthedia-nav::-webkit-scrollbar {
+                display: none; /* Hide scrollbar for Chrome, Safari and Opera */
             }
             .healthedia-nav-item {
-                font-size: 12px;
+                font-size: 13px;
                 padding: 6px 12px;
+                flex-shrink: 0; /* Do not shrink navigation links */
             }
             .healthedia-btn-login {
-                padding: 8px 20px;
+                padding: 8px 18px;
                 font-size: 12px;
+            }
+            .healthedia-dropdown-trigger {
+                padding: 4px 10px 4px 4px;
+                gap: 6px;
+            }
+            .healthedia-header-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 10px;
+            }
+            .healthedia-header-user-name {
+                font-size: 11px;
+            }
+            .healthedia-dropdown-menu {
+                width: 180px;
+                top: calc(100% + 6px);
             }
         }
     </style>
@@ -469,15 +513,30 @@ function healthedia_get_footer() {
             display: inline-block;
         }
 
+        /* Mobile footer styling optimization */
         @media (max-width: 768px) {
             .healthedia-footer-container {
                 flex-direction: column;
                 text-align: center;
-                gap: 12px;
+                gap: 16px;
+                padding-top: 16px;
+            }
+            .healthedia-footer-copyright {
+                font-size: 12px;
+                line-height: 1.4;
             }
             .healthedia-footer-links {
                 justify-content: center;
-                gap: 8px;
+                gap: 10px;
+            }
+            .healthedia-footer-link {
+                font-size: 12px;
+                padding: 4px 8px;
+                background-color: #f7f7f7;
+                border-radius: 6px;
+            }
+            .healthedia-footer-dot {
+                display: none; /* Hide static separators on mobile to prevent layout leakage on wraps */
             }
         }
     </style>
