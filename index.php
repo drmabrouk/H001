@@ -14,7 +14,6 @@
             max-width: 900px;
             margin: 60px auto;
             padding: 0 20px;
-            font-family: 'Inter', system-ui, sans-serif;
             box-sizing: border-box;
             min-height: 400px;
         }

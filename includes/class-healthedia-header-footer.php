@@ -24,6 +24,41 @@ function healthedia_get_header() {
     $active_search = $is_search ? 'active' : '';
     $active_dashboard = $is_dashboard ? 'active' : '';
 
+    // Handle Profile Update POST action
+    if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+        if ( isset( $_POST['healthedia_action'] ) && $_POST['healthedia_action'] === 'update_profile' ) {
+            if ( isset( $_POST['healthedia_auth_nonce'] ) && wp_verify_nonce( $_POST['healthedia_auth_nonce'], 'healthedia_auth_action' ) ) {
+                $current_user = wp_get_current_user();
+                if ( $current_user->ID > 0 ) {
+                    $new_name = sanitize_text_field( $_POST['display_name'] );
+                    $new_email = sanitize_email( $_POST['user_email'] );
+
+                    // Update main user details
+                    wp_update_user([
+                        'ID' => $current_user->ID,
+                        'display_name' => $new_name,
+                        'user_email' => $new_email,
+                    ]);
+
+                    // Save custom metadata to options database
+                    update_option( 'healthedia_phone_' . $current_user->ID, sanitize_text_field( $_POST['phone'] ) );
+                    update_option( 'healthedia_workplace_' . $current_user->ID, sanitize_text_field( $_POST['workplace'] ) );
+                    update_option( 'healthedia_degree_' . $current_user->ID, sanitize_text_field( $_POST['degree'] ) );
+                    update_option( 'healthedia_title_' . $current_user->ID, sanitize_text_field( $_POST['title'] ) );
+                    update_option( 'healthedia_nationality_' . $current_user->ID, sanitize_text_field( $_POST['nationality'] ) );
+                    update_option( 'healthedia_country_' . $current_user->ID, sanitize_text_field( $_POST['country'] ) );
+                    update_option( 'healthedia_gender_' . $current_user->ID, sanitize_text_field( $_POST['gender'] ) );
+                    update_option( 'healthedia_dob_' . $current_user->ID, sanitize_text_field( $_POST['dob'] ) );
+                    update_option( 'healthedia_profile_pic_' . $current_user->ID, sanitize_text_field( $_POST['profile_pic'] ) );
+
+                    // Force redirect to refresh state!
+                    wp_safe_redirect( $_SERVER['REQUEST_URI'] );
+                    exit;
+                }
+            }
+        }
+    }
+
     // Load Header Menu from options dynamically
     $header_menu = get_option( 'healthedia_header_menu' );
     if ( ! is_array( $header_menu ) ) {
@@ -54,6 +89,7 @@ function healthedia_get_header() {
     }
 
     $auth_area = '';
+    $modal_html = '';
     if ( is_user_logged_in() ) {
         $current_user = wp_get_current_user();
         $display_name = ! empty( $current_user->display_name ) ? $current_user->display_name : 'Researcher';
@@ -84,6 +120,10 @@ function healthedia_get_header() {
                     <div class="healthedia-dropdown-user-name">' . esc_html( $display_name ) . '</div>
                 </div>
                 <hr class="healthedia-dropdown-divider">
+                <button class="healthedia-dropdown-item" id="header-edit-account-btn" style="background:none; border:none; width:100%; cursor:pointer; font-family:inherit;">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z"></path></svg>
+                    Edit Account Info
+                </button>
                 <a href="' . $dashboard_url . '" class="healthedia-dropdown-item">
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
                     SaaS Dashboard
@@ -92,6 +132,111 @@ function healthedia_get_header() {
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                     Log Out
                 </a>
+            </div>
+        </div>
+        ';
+
+        // Edit Account Info Modal (Multi-step wizard)
+        $modal_html = '
+        <div class="healthedia-modal-overlay" id="healthedia-edit-account-modal">
+            <div class="healthedia-modal-card">
+                <div class="healthedia-modal-header">
+                    <h3 class="healthedia-modal-title">Edit Account Information</h3>
+                    <button class="healthedia-modal-close" id="healthedia-modal-close-btn">&times;</button>
+                </div>
+
+                <!-- Wizard Step Indicators -->
+                <div class="healthedia-wizard-steps-indicator" style="margin-bottom: 24px;">
+                    <div class="healthedia-wizard-indicator-dot active" id="modal-dot-1">1</div>
+                    <div class="healthedia-wizard-indicator-line" id="modal-line-1"></div>
+                    <div class="healthedia-wizard-indicator-dot" id="modal-dot-2">2</div>
+                    <div class="healthedia-wizard-indicator-line" id="modal-line-2"></div>
+                    <div class="healthedia-wizard-indicator-dot" id="modal-dot-3">3</div>
+                </div>
+
+                <form id="healthedia-edit-account-form" method="POST">
+                    <input type="hidden" name="healthedia_auth_nonce" value="mock_nonce_value">
+                    <input type="hidden" name="healthedia_action" value="update_profile">
+
+                    <!-- STEP 1: Personal Profile -->
+                    <div class="healthedia-modal-fieldset" id="modal-fieldset-1">
+                        <div class="healthedia-form-row">
+                            <label class="healthedia-form-label">Full Name</label>
+                            <input type="text" name="display_name" class="healthedia-input-field" value="' . esc_attr( $display_name ) . '" required id="edit-display-name">
+                        </div>
+                        <div class="healthedia-form-row">
+                            <label class="healthedia-form-label">Username</label>
+                            <input type="text" name="user_nicename" class="healthedia-input-field" value="' . esc_attr( isset($current_user->user_login) ? $current_user->user_login : "" ) . '" required id="edit-user-nicename">
+                        </div>
+                        <div class="healthedia-form-row">
+                            <label class="healthedia-form-label">Profile Picture URL</label>
+                            <input type="text" name="profile_pic" class="healthedia-input-field" placeholder="e.g. http://..." value="' . esc_attr( get_option( "healthedia_profile_pic_" . $current_user->ID, "" ) ) . '" id="edit-profile-pic">
+                        </div>
+                        <div class="healthedia-form-row" style="display: flex; gap: 12px;">
+                            <div style="flex:1;">
+                                <label class="healthedia-form-label">Gender</label>
+                                <select name="gender" class="healthedia-select-input" style="width:100%;" id="edit-gender">
+                                    <option value="male" ' . selected( get_option("healthedia_gender_".$current_user->ID), "male", false ) . '>Male</option>
+                                    <option value="female" ' . selected( get_option("healthedia_gender_".$current_user->ID), "female", false ) . '>Female</option>
+                                    <option value="other" ' . selected( get_option("healthedia_gender_".$current_user->ID), "other", false ) . '>Other</option>
+                                </select>
+                            </div>
+                            <div style="flex:1;">
+                                <label class="healthedia-form-label">Date of Birth</label>
+                                <input type="date" name="dob" class="healthedia-input-field" value="' . esc_attr( get_option( "healthedia_dob_" . $current_user->ID, "" ) ) . '" id="edit-dob">
+                            </div>
+                        </div>
+                        <button type="button" class="healthedia-auth-submit" onclick="nextModalStep(2)" style="padding:14px 0; margin-top:15px;" id="modal-next-1">CONTINUE TO PROFESSIONAL</button>
+                    </div>
+
+                    <!-- STEP 2: Professional Details -->
+                    <div class="healthedia-modal-fieldset" id="modal-fieldset-2" style="display:none;">
+                        <div class="healthedia-form-row">
+                            <label class="healthedia-form-label">Workplace / Institution</label>
+                            <input type="text" name="workplace" class="healthedia-input-field" value="' . esc_attr( get_option( "healthedia_workplace_" . $current_user->ID, "Cambridge University" ) ) . '" required id="edit-workplace">
+                        </div>
+                        <div class="healthedia-form-row" style="display: flex; gap: 12px;">
+                            <div style="flex:1;">
+                                <label class="healthedia-form-label">Academic Degree</label>
+                                <input type="text" name="degree" class="healthedia-input-field" placeholder="e.g. Ph.D." value="' . esc_attr( get_option( "healthedia_degree_" . $current_user->ID, "PhD" ) ) . '" id="edit-degree">
+                            </div>
+                            <div style="flex:1;">
+                                <label class="healthedia-form-label">Professional Title</label>
+                                <input type="text" name="title" class="healthedia-input-field" placeholder="e.g. Professor" value="' . esc_attr( get_option( "healthedia_title_" . $current_user->ID, "Professor" ) ) . '" id="edit-title">
+                            </div>
+                        </div>
+                        <div class="healthedia-form-row" style="display: flex; gap: 12px;">
+                            <div style="flex:1;">
+                                <label class="healthedia-form-label">Nationality</label>
+                                <input type="text" name="nationality" class="healthedia-input-field" value="' . esc_attr( get_option( "healthedia_nationality_" . $current_user->ID, "British" ) ) . '" id="edit-nationality">
+                            </div>
+                            <div style="flex:1;">
+                                <label class="healthedia-form-label">Country of Residence</label>
+                                <input type="text" name="country" class="healthedia-input-field" value="' . esc_attr( get_option( "healthedia_country_" . $current_user->ID, "United Kingdom" ) ) . '" id="edit-country">
+                            </div>
+                        </div>
+                        <div class="healthedia-wizard-actions" style="margin-top:15px;">
+                            <button type="button" class="healthedia-auth-btn-secondary" onclick="prevModalStep(1)" style="padding:14px 0;">BACK</button>
+                            <button type="button" class="healthedia-auth-submit" onclick="nextModalStep(3)" style="padding:14px 0;" id="modal-next-2">CONTINUE TO CONTACT</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Contact Information -->
+                    <div class="healthedia-modal-fieldset" id="modal-fieldset-3" style="display:none;">
+                        <div class="healthedia-form-row">
+                            <label class="healthedia-form-label">Email Address</label>
+                            <input type="email" name="user_email" class="healthedia-input-field" value="' . esc_attr( isset($current_user->user_email) ? $current_user->user_email : "" ) . '" required id="edit-user-email">
+                        </div>
+                        <div class="healthedia-form-row">
+                            <label class="healthedia-form-label">Phone Number</label>
+                            <input type="text" name="phone" class="healthedia-input-field" placeholder="e.g. +44 1234 567890" value="' . esc_attr( get_option( "healthedia_phone_" . $current_user->ID, "" ) ) . '" id="edit-phone">
+                        </div>
+                        <div class="healthedia-wizard-actions" style="margin-top:20px;">
+                            <button type="button" class="healthedia-auth-btn-secondary" onclick="prevModalStep(2)" style="padding:14px 0;">BACK</button>
+                            <button type="submit" class="healthedia-auth-submit" style="padding:14px 0;" id="edit-profile-save-btn">SAVE UPDATES</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
         ';
@@ -113,31 +258,36 @@ function healthedia_get_header() {
                 <nav class="healthedia-nav">
                     ' . $nav_html . '
                 </nav>
+            </div>
 
-                <!-- Mobile Dropdown Navigation Trigger -->
+            <!-- Right-aligned Authentication & Mobile Menu Wrapper -->
+            <div class="healthedia-header-right-wrapper">
+                <!-- Right-aligned Authentication Area -->
+                <div class="healthedia-auth-btn-wrapper">
+                    ' . $auth_area . '
+                </div>
+
+                <!-- Mobile Dropdown Navigation Trigger - positioned on far right -->
                 <div class="healthedia-mobile-nav-trigger-container" id="healthedia-mobile-trigger-container">
-                    <button class="healthedia-mobile-menu-btn" id="mobile-menu-toggle-btn">
-                        <span>MENU</span>
-                        <svg class="healthedia-dropdown-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <button class="healthedia-mobile-menu-btn" id="mobile-menu-toggle-btn" aria-label="Menu">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
                     </button>
                     <div class="healthedia-mobile-dropdown-menu" id="mobile-dropdown-menu-list">
                         ' . $nav_html . '
                     </div>
                 </div>
             </div>
-
-            <!-- Right-aligned Authentication Area -->
-            <div class="healthedia-auth-btn-wrapper">
-                ' . $auth_area . '
-            </div>
         </div>
     </header>
 
-    <style>
-        @import url(\'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap\');
+    ' . $modal_html . '
 
+    <style>
         :root {
-            --healthedia-font: \'Inter\', system-ui, -apple-system, sans-serif;
             --healthedia-black: #000000;
             --healthedia-white: #ffffff;
             --healthedia-grey: #666666;
@@ -151,7 +301,6 @@ function healthedia_get_header() {
             margin: 20px auto;
             padding: 0 20px;
             box-sizing: border-box;
-            font-family: var(--healthedia-font);
         }
 
         .healthedia-header-container {
@@ -368,6 +517,13 @@ function healthedia_get_header() {
             color: #bf271b;
         }
 
+        /* Header Right Wrapper Style */
+        .healthedia-header-right-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
         /* Desktop specific mobile menu display reset */
         .healthedia-mobile-nav-trigger-container {
             display: none;
@@ -401,16 +557,11 @@ function healthedia_get_header() {
                 background: none;
                 border: 1px solid var(--healthedia-border);
                 border-radius: 20px;
-                padding: 6px 14px;
-                font-size: 11px;
-                font-weight: 700;
-                color: var(--healthedia-black);
+                padding: 6px;
+                cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 6px;
-                cursor: pointer;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
+                justify-content: center;
             }
             .healthedia-mobile-menu-btn:hover {
                 border-color: var(--healthedia-black);
@@ -418,7 +569,8 @@ function healthedia_get_header() {
             .healthedia-mobile-dropdown-menu {
                 display: none;
                 position: absolute;
-                left: 0;
+                right: 0 !important; /* Align dropdown with right edge of trigger */
+                left: auto !important;
                 top: calc(100% + 8px);
                 background-color: #ffffff !important; /* Force solid white background */
                 background: #ffffff !important;
@@ -477,41 +629,153 @@ function healthedia_get_header() {
                 top: calc(100% + 6px);
             }
         }
+
+        /* MODAL DIALOG PRESET STYLING */
+        .healthedia-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1000000;
+            align-items: center;
+            justify-content: center;
+            animation: modalOverlayFade 0.25s ease;
+        }
+        .healthedia-modal-overlay.open {
+            display: flex !important;
+        }
+        @keyframes modalOverlayFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .healthedia-modal-card {
+            background-color: #ffffff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            position: relative;
+            animation: modalSlideUp 0.25s ease;
+        }
+        @keyframes modalSlideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .healthedia-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .healthedia-modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            margin: 0;
+            color: #000000;
+        }
+        .healthedia-modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #888888;
+            line-height: 1;
+            padding: 0;
+        }
+        .healthedia-modal-close:hover {
+            color: #000000;
+        }
+        .healthedia-modal-form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
     </style>
 
     <script id="healthedia-header-script">
-        document.addEventListener(\'DOMContentLoaded\', function() {
+        // Helper multi-step navigation for modal wizard
+        function nextModalStep(step) {
+            document.getElementById("modal-fieldset-1").style.display = "none";
+            document.getElementById("modal-fieldset-2").style.display = "none";
+            document.getElementById("modal-fieldset-3").style.display = "none";
+
+            document.getElementById("modal-fieldset-" + step).style.display = "block";
+
+            // Update indicators
+            document.getElementById("modal-dot-1").className = "healthedia-wizard-indicator-dot " + (step > 1 ? "completed" : "active");
+            document.getElementById("modal-line-1").className = "healthedia-wizard-indicator-line " + (step > 1 ? "active" : "");
+
+            document.getElementById("modal-dot-2").className = "healthedia-wizard-indicator-dot " + (step === 2 ? "active" : (step > 2 ? "completed" : ""));
+            document.getElementById("modal-line-2").className = "healthedia-wizard-indicator-line " + (step > 2 ? "active" : "");
+
+            document.getElementById("modal-dot-3").className = "healthedia-wizard-indicator-dot " + (step === 3 ? "active" : "");
+        }
+
+        function prevModalStep(step) {
+            nextModalStep(step);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
             // Deskop user profile dropdown
-            const dropdownContainer = document.getElementById(\'healthedia-header-dropdown\');
-            const dropdownBtn = document.getElementById(\'header-user-dropdown-btn\');
+            const dropdownContainer = document.getElementById("healthedia-header-dropdown");
+            const dropdownBtn = document.getElementById("header-user-dropdown-btn");
 
             if (dropdownBtn && dropdownContainer) {
-                dropdownBtn.addEventListener(\'click\', function(e) {
+                dropdownBtn.addEventListener("click", function(e) {
                     e.stopPropagation();
-                    dropdownContainer.classList.toggle(\'open\');
+                    dropdownContainer.classList.toggle("open");
                 });
 
-                document.addEventListener(\'click\', function(e) {
+                document.addEventListener("click", function(e) {
                     if (!dropdownContainer.contains(e.target)) {
-                        dropdownContainer.classList.remove(\'open\');
+                        dropdownContainer.classList.remove("open");
                     }
                 });
             }
 
             // Mobile menu navigation dropdown
-            const mobileTrigger = document.getElementById(\'healthedia-mobile-trigger-container\');
-            const mobileBtn = document.getElementById(\'mobile-menu-toggle-btn\');
+            const mobileTrigger = document.getElementById("healthedia-mobile-trigger-container");
+            const mobileBtn = document.getElementById("mobile-menu-toggle-btn");
 
             if (mobileBtn && mobileTrigger) {
-                mobileBtn.addEventListener(\'click\', function(e) {
+                mobileBtn.addEventListener("click", function(e) {
                     e.stopPropagation();
-                    mobileTrigger.classList.toggle(\'open\');
+                    mobileTrigger.classList.toggle("open");
                 });
 
-                document.addEventListener(\'click\', function(e) {
+                document.addEventListener("click", function(e) {
                     if (!mobileTrigger.contains(e.target)) {
-                        mobileTrigger.classList.remove(\'open\');
+                        mobileTrigger.classList.remove("open");
                     }
+                });
+            }
+
+            // Edit Account Info Modal Toggle
+            const modalOverlay = document.getElementById("healthedia-edit-account-modal");
+            const openModalBtn = document.getElementById("header-edit-account-btn");
+            const closeModalBtn = document.getElementById("healthedia-modal-close-btn");
+
+            if (openModalBtn && modalOverlay) {
+                openModalBtn.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    modalOverlay.classList.add("open");
+                    nextModalStep(1); // Reset wizard back to first step
+                    if (dropdownContainer) {
+                        dropdownContainer.classList.remove("open");
+                    }
+                });
+            }
+
+            if (closeModalBtn && modalOverlay) {
+                closeModalBtn.addEventListener("click", function() {
+                    modalOverlay.classList.remove("open");
                 });
             }
         });
@@ -566,7 +830,6 @@ function healthedia_get_footer() {
             margin: 40px auto 20px auto;
             padding: 0 20px;
             box-sizing: border-box;
-            font-family: var(--healthedia-font);
         }
 
         .healthedia-footer-container {
@@ -678,6 +941,7 @@ function healthedia_output_buffer_callback( $buffer ) {
             margin: 0 !important;
             opacity: 0 !important;
             visibility: hidden !important;
+            display: none !important;
         }
         body {
             margin: 0 !important;

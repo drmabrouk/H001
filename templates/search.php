@@ -19,7 +19,6 @@
             padding: 80px 20px;
             max-width: 900px;
             margin: 0 auto;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             box-sizing: border-box;
             min-height: calc(100vh - 280px);
         }
@@ -162,7 +161,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
+            gap: 8px; /* Slightly compacted spacing */
             max-width: 700px;
         }
 
@@ -171,9 +170,9 @@
             background-color: #ffffff;
             border: 1px solid #e5e5e5;
             color: #666666;
-            font-size: 11px;
+            font-size: 10px; /* Reduced font size as requested */
             font-weight: 600;
-            padding: 8px 16px;
+            padding: 6px 12px; /* Compact padding */
             border-radius: 20px;
             transition: all 0.2s ease;
             text-transform: uppercase;
@@ -228,25 +227,15 @@
                 <button class="healthedia-icon-btn" title="Voice Search" id="healthedia-voice-search">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
                 </button>
-                <button class="healthedia-icon-btn" title="AI Search Optimization" id="healthedia-ai-search">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <!-- AI Sparkle Icon Path -->
-                        <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.34 6.34l2.83 2.83M14.83 14.83l2.83 2.83M6.34 17.66l2.83-2.83M14.83 9.17l2.83-2.83"/>
-                    </svg>
-                </button>
                 <button class="healthedia-search-submit" id="healthedia-search-button">Search</button>
             </div>
         </div>
 
-        <!-- Suggested tags -->
+        <!-- Suggested tags (Limited to maximum of 3 items, with reduced font sizing) -->
         <div class="healthedia-suggested-tags">
             <a href="#" class="healthedia-tag">HIIT VS CONTINUOUS AEROBIC</a>
             <a href="#" class="healthedia-tag">ACHILLES TENDINOPATHY</a>
             <a href="#" class="healthedia-tag">MYOKINES IN MUSCLE AGING</a>
-            <a href="#" class="healthedia-tag">SLEEP OPTIMIZATION</a>
-            <a href="#" class="healthedia-tag">SARCOPENIA</a>
-            <a href="#" class="healthedia-tag">GAIT BIOMECHANICS</a>
-            <a href="#" class="healthedia-tag">KETONE MONOESTER SUPPLEMENTATION</a>
         </div>
     </main>
 
@@ -290,14 +279,12 @@
             });
 
             // Mic action
-            document.getElementById('healthedia-voice-search').addEventListener('click', function() {
-                alert('Voice search activated.');
-            });
-
-            // AI action
-            document.getElementById('healthedia-ai-search').addEventListener('click', function() {
-                alert('AI Optimization activated.');
-            });
+            const voiceSearchBtn = document.getElementById('healthedia-voice-search');
+            if (voiceSearchBtn) {
+                voiceSearchBtn.addEventListener('click', function() {
+                    alert('Voice search activated.');
+                });
+            }
         });
     </script>
     <?php wp_footer(); ?>

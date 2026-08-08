@@ -138,7 +138,6 @@ if ( ! empty( $display_name ) ) {
             margin: 0 !important;
             padding: 0 !important;
             background-color: #fafafa !important;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             color: #111111;
         }
 
