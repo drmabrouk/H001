@@ -24,41 +24,82 @@ function healthedia_get_header() {
     $active_search = $is_search ? 'active' : '';
     $active_dashboard = $is_dashboard ? 'active' : '';
 
-    $auth_btn = '';
+    $auth_area = '';
     if ( is_user_logged_in() ) {
-        $auth_btn = '<a href="' . esc_url( wp_logout_url( home_url( '/' ) ) ) . '" class="healthedia-btn-login">LOGOUT</a>';
+        $current_user = wp_get_current_user();
+        $display_name = ! empty( $current_user->display_name ) ? $current_user->display_name : 'Researcher';
+
+        // Calculate initials for dropdown trigger avatar
+        $initials = '';
+        if ( ! empty( $display_name ) ) {
+            $parts = explode( ' ', $display_name );
+            if ( count( $parts ) >= 2 ) {
+                $initials = strtoupper( substr( $parts[0], 0, 1 ) . substr( $parts[1], 0, 1 ) );
+            } else {
+                $initials = strtoupper( substr( $display_name, 0, 2 ) );
+            }
+        } else {
+            $initials = 'RE';
+        }
+
+        $auth_area = '
+        <div class="healthedia-user-dropdown-container" id="healthedia-header-dropdown">
+            <button class="healthedia-dropdown-trigger" id="header-user-dropdown-btn">
+                <div class="healthedia-header-avatar">' . esc_html( $initials ) . '</div>
+                <span class="healthedia-header-user-name">' . esc_html( $display_name ) . '</span>
+                <svg class="healthedia-dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="healthedia-dropdown-menu" id="header-user-dropdown-menu">
+                <div class="healthedia-dropdown-header">
+                    <div class="healthedia-dropdown-welcome">Welcome back!</div>
+                    <div class="healthedia-dropdown-user-name">' . esc_html( $display_name ) . '</div>
+                </div>
+                <hr class="healthedia-dropdown-divider">
+                <a href="' . $dashboard_url . '" class="healthedia-dropdown-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+                    SaaS Dashboard
+                </a>
+                <a href="' . esc_url( wp_logout_url( home_url( '/' ) ) ) . '" class="healthedia-dropdown-item healthedia-logout-btn" id="header-logout-btn">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Log Out
+                </a>
+            </div>
+        </div>
+        ';
     } else {
-        $auth_btn = '<a href="' . $auth_url . '" class="healthedia-btn-login">LOGIN</a>';
+        $auth_area = '<a href="' . $auth_url . '" class="healthedia-btn-login">LOGIN</a>';
     }
 
     $html = '
     <header class="healthedia-global-header">
         <div class="healthedia-header-container">
-            <!-- Logo Section -->
-            <a href="' . $home_url . '" class="healthedia-logo-group">
-                <span class="healthedia-logo-title">Healthedia</span>
-                <span class="healthedia-logo-sub">GLOBAL HEALTH ARCHIVE</span>
-            </a>
+            <!-- Left-aligned Logo & Nav Group -->
+            <div class="healthedia-header-left-group">
+                <a href="' . $home_url . '" class="healthedia-logo-group">
+                    <span class="healthedia-logo-title">Healthedia</span>
+                    <span class="healthedia-logo-sub">GLOBAL HEALTH ARCHIVE</span>
+                </a>
 
-            <!-- Navigation Links -->
-            <nav class="healthedia-nav">
-                <a href="' . $search_url . '" class="healthedia-nav-item ' . $active_search . '">
-                    Archive Search
-                </a>
-                <a href="' . $dashboard_url . '" class="healthedia-nav-item ' . $active_dashboard . '">
-                    Researchers
-                </a>
-                <a href="#" class="healthedia-nav-item">
-                    Institutions
-                </a>
-                <a href="#" class="healthedia-nav-item">
-                    Scientific Journal
-                </a>
-            </nav>
+                <!-- Navigation Links - Shifted directly to the right of the logo -->
+                <nav class="healthedia-nav">
+                    <a href="' . $search_url . '" class="healthedia-nav-item ' . $active_search . '">
+                        Archive Search
+                    </a>
+                    <a href="' . $dashboard_url . '" class="healthedia-nav-item ' . $active_dashboard . '">
+                        Researchers
+                    </a>
+                    <a href="#" class="healthedia-nav-item">
+                        Institutions
+                    </a>
+                    <a href="#" class="healthedia-nav-item">
+                        Scientific Journal
+                    </a>
+                </nav>
+            </div>
 
-            <!-- Authentication Button -->
+            <!-- Right-aligned Authentication Area -->
             <div class="healthedia-auth-btn-wrapper">
-                ' . $auth_btn . '
+                ' . $auth_area . '
             </div>
         </div>
     </header>
@@ -88,13 +129,19 @@ function healthedia_get_header() {
             background: var(--healthedia-white);
             border: 1px solid var(--healthedia-border);
             border-radius: 50px;
-            padding: 10px 24px;
+            padding: 0 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
             box-sizing: border-box;
-            height: 70px;
+            height: 60px; /* Reduced from 70px for a more compact and elegant profile */
+        }
+
+        .healthedia-header-left-group {
+            display: flex;
+            align-items: center;
+            gap: 40px; /* Positions navigation items directly to the right of the logo with consistent spacing */
         }
 
         .healthedia-logo-group {
@@ -122,7 +169,7 @@ function healthedia_get_header() {
         .healthedia-nav {
             display: flex;
             align-items: center;
-            gap: 24px;
+            gap: 16px;
         }
 
         .healthedia-nav-item {
@@ -130,7 +177,7 @@ function healthedia_get_header() {
             color: var(--healthedia-grey);
             font-size: 14px;
             font-weight: 600;
-            padding: 10px 18px;
+            padding: 8px 16px;
             border-radius: 30px;
             transition: all 0.2s ease;
         }
@@ -150,7 +197,7 @@ function healthedia_get_header() {
             text-decoration: none;
             font-size: 14px;
             font-weight: 700;
-            padding: 12px 32px;
+            padding: 10px 28px;
             border-radius: 30px;
             letter-spacing: 1px;
             transition: transform 0.2s ease, opacity 0.2s ease;
@@ -162,12 +209,146 @@ function healthedia_get_header() {
             transform: translateY(-1px);
         }
 
+        /* User Dropdown Premium Styling */
+        .healthedia-user-dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .healthedia-dropdown-trigger {
+            background: none;
+            border: 1px solid var(--healthedia-border);
+            border-radius: 30px;
+            padding: 4px 14px 4px 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .healthedia-dropdown-trigger:hover {
+            border-color: var(--healthedia-black);
+            background-color: #fafafa;
+        }
+
+        .healthedia-header-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--healthedia-black);
+            color: var(--healthedia-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .healthedia-header-user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .healthedia-dropdown-chevron {
+            color: #888888;
+            transition: transform 0.2s ease;
+        }
+
+        .healthedia-user-dropdown-container.open .healthedia-dropdown-chevron {
+            transform: rotate(180deg);
+        }
+
+        .healthedia-dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            background: var(--healthedia-white);
+            border: 1px solid var(--healthedia-border);
+            border-radius: 16px;
+            width: 220px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            padding: 12px;
+            box-sizing: border-box;
+            z-index: 10000;
+            animation: dropdownFadeIn 0.2s ease;
+        }
+
+        .healthedia-user-dropdown-container.open .healthedia-dropdown-menu {
+            display: block;
+        }
+
+        @keyframes dropdownFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .healthedia-dropdown-header {
+            padding: 4px 8px 10px 8px;
+            text-align: left;
+        }
+
+        .healthedia-dropdown-welcome {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .healthedia-dropdown-user-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--healthedia-black);
+            margin-top: 2px;
+        }
+
+        .healthedia-dropdown-divider {
+            border: 0;
+            border-top: 1px solid var(--healthedia-border);
+            margin: 6px 0;
+        }
+
+        .healthedia-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555555;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .healthedia-dropdown-item:hover {
+            background-color: #f5f5f5;
+            color: var(--healthedia-black);
+        }
+
+        .healthedia-dropdown-item.healthedia-logout-btn {
+            color: #bf271b;
+        }
+
+        .healthedia-dropdown-item.healthedia-logout-btn:hover {
+            background-color: #fbeae9;
+            color: #bf271b;
+        }
+
         /* Mobile layout */
         @media (max-width: 768px) {
             .healthedia-header-container {
                 border-radius: 25px;
                 height: auto;
                 padding: 12px 16px;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .healthedia-header-left-group {
                 flex-direction: column;
                 gap: 12px;
             }
@@ -186,6 +367,26 @@ function healthedia_get_header() {
             }
         }
     </style>
+
+    <script id="healthedia-header-script">
+        document.addEventListener(\'DOMContentLoaded\', function() {
+            const dropdownContainer = document.getElementById(\'healthedia-header-dropdown\');
+            const dropdownBtn = document.getElementById(\'header-user-dropdown-btn\');
+
+            if (dropdownBtn && dropdownContainer) {
+                dropdownBtn.addEventListener(\'click\', function(e) {
+                    e.stopPropagation();
+                    dropdownContainer.classList.toggle(\'open\');
+                });
+
+                document.addEventListener(\'click\', function(e) {
+                    if (!dropdownContainer.contains(e.target)) {
+                        dropdownContainer.classList.remove(\'open\');
+                    }
+                });
+            }
+        });
+    </script>
     ';
 
     return $html;
