@@ -41,6 +41,37 @@ function healthedia_activate_plugin() {
             }
         }
     }
+
+    // Initialize Menu Options
+    $default_header = [
+        ['title' => 'Archive Search', 'url' => home_url('/healthedia-search/')],
+        ['title' => 'Researchers', 'url' => home_url('/healthedia-dashboard/')],
+        ['title' => 'Institutions', 'url' => '#'],
+        ['title' => 'Scientific Journal', 'url' => '#']
+    ];
+    if ( ! get_option( 'healthedia_header_menu' ) ) {
+        update_option( 'healthedia_header_menu', $default_header );
+    }
+
+    $default_footer = [
+        ['title' => 'Privacy Policy', 'url' => '#'],
+        ['title' => 'Terms & Conditions', 'url' => '#'],
+        ['title' => 'Publication Policies', 'url' => '#'],
+        ['title' => 'Certificate Verification', 'url' => '#'],
+        ['title' => 'Support', 'url' => '#']
+    ];
+    if ( ! get_option( 'healthedia_footer_menu' ) ) {
+        update_option( 'healthedia_footer_menu', $default_footer );
+    }
+
+    // Initialize Authentication Settings Options
+    $default_auth = [
+        'login' => 'enabled',
+        'registration' => 'enabled'
+    ];
+    if ( ! get_option( 'healthedia_auth_options' ) ) {
+        update_option( 'healthedia_auth_options', $default_auth );
+    }
 }
 
 function healthedia_deactivate_plugin() {
