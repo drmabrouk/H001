@@ -246,9 +246,79 @@ def run_tests():
         page.wait_for_selector("#dashboard-success-banner")
         print("[PASS] Authentication Options form submitted and saved.")
 
+        # ==========================================
+        # 10. VERIFICATION PORTAL ADMINISTRATIVE MANAGEMENT
+        # ==========================================
+        print("Navigating to SaaS Dashboard Verification Portal Tab...")
+        page.click("button[data-section='verification-admin']")
+        page.wait_for_selector("#sec-verification-admin", state="visible")
+
+        # Test creating a new certificate entry
+        print("Creating a new certificate entry inside admin panel...")
+        page.fill("#new_serial", "HE-TEST-999")
+        page.fill("#new_recipient", "Dr. Jules Test")
+        page.fill("#new_doc_type", "Playwright Integration Specialist Certificate")
+        page.fill("#new_date_issued", "2026-08-08")
+        page.select_option("#new_status", value="Active")
+        page.fill("#new_notes", "Verified dynamically using Playwright automated script.")
+        page.click("#verification-add-submit-btn")
+        page.wait_for_selector("#dashboard-success-banner")
+        print("[PASS] New verification record added from dashboard successfully.")
 
         # ==========================================
-        # 10. LOGOUT AND DYNAMIC AUTH RESTRICTION
+        # 11. PUBLIC VERIFICATION PORTAL LOOKUP
+        # ==========================================
+        print("Visiting Public Verification Portal...")
+        page.goto("http://localhost:8000/verification/")
+        page.wait_for_selector("#verification-serial-input")
+
+        # Look up valid mock record
+        print("Looking up valid record 'HE-8492-X'...")
+        page.fill("#verification-serial-input", "HE-8492-X")
+        page.click("#verification-search-btn")
+        page.wait_for_selector("#verification-result-container")
+        assert "Verified ✅" in page.text_content("#verification-result-container")
+        assert "Dr. Mabrouk" in page.text_content("#res-recipient")
+        assert "Clinical Hydration Certificate" in page.text_content("#res-doc-type")
+        print("[PASS] Valid lookup returned correct certificate data.")
+
+        # Look up dynamically created record
+        print("Looking up dynamically created record 'HE-TEST-999'...")
+        page.goto("http://localhost:8000/verification/")
+        page.fill("#verification-serial-input", "HE-TEST-999")
+        page.click("#verification-search-btn")
+        page.wait_for_selector("#verification-result-container")
+        assert "Verified ✅" in page.text_content("#verification-result-container")
+        assert "Dr. Jules Test" in page.text_content("#res-recipient")
+        assert "Playwright Integration Specialist Certificate" in page.text_content("#res-doc-type")
+        print("[PASS] Dynamically created record lookup succeeded.")
+
+        # Look up invalid record
+        print("Looking up invalid record 'HE-INVALID-999'...")
+        page.goto("http://localhost:8000/verification/")
+        page.fill("#verification-serial-input", "HE-INVALID-999")
+        page.click("#verification-search-btn")
+        page.wait_for_selector("#verification-not-found-view")
+        assert "Record Not Found" in page.text_content("#verification-not-found-view")
+        print("[PASS] Invalid lookup returned clean 'Record Not Found' message.")
+
+        # Navigate back to Dashboard to test Delete action
+        page.goto("http://localhost:8000/healthedia-dashboard/")
+        page.wait_for_selector(".healthedia-dashboard-layout")
+        page.click("button[data-section='verification-admin']")
+        page.wait_for_selector("#sec-verification-admin", state="visible")
+
+        # Locate delete form for 'HE-TEST-999'
+        print("Deleting dynamically created record 'HE-TEST-999'...")
+        # Since we use standard confirm alerts, we can mock page.on('dialog') or simply run form submission
+        # Let's override page dialog handling so alert confirms automatically
+        page.once("dialog", lambda dialog: dialog.accept())
+        page.locator("tr", has=page.locator("text=HE-TEST-999")).locator("button.delete").click()
+        page.wait_for_selector("#dashboard-success-banner")
+        print("[PASS] Deleted dynamically created record successfully.")
+
+        # ==========================================
+        # 12. LOGOUT AND DYNAMIC AUTH RESTRICTION
         # ==========================================
         print("Testing logout action and automatic homepage redirection...")
         page.click("text=Logout")
@@ -265,7 +335,7 @@ def run_tests():
         print("[PASS] Authentication tab lock works cleanly and dynamically restricts registration.")
 
         browser.close()
-        print("--- All Healthedia Verification Tests Passed Perfectly! ---")
+        print("--- All Healthedia Verification Portal & Core Tests Passed Perfectly! ---")
 
 if __name__ == "__main__":
     run_tests()

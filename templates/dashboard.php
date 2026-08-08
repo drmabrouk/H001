@@ -85,8 +85,69 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
                     $success_notification = esc_html( ucfirst( $link_type ) ) . ' display order updated!';
                 }
             }
+
+            // 3. Manage Certificate/Document Records
+            elseif ( $_POST['healthedia_dashboard_action'] === 'manage_verification' ) {
+                $cert_action = isset( $_POST['cert_action'] ) ? sanitize_text_field( $_POST['cert_action'] ) : '';
+                $certificates = get_option( 'healthedia_certificates', [] );
+                if ( ! is_array( $certificates ) ) {
+                    $certificates = [];
+                }
+
+                if ( $cert_action === 'add' ) {
+                    $serial = sanitize_text_field( trim( $_POST['serial_number'] ) );
+                    $recipient = sanitize_text_field( trim( $_POST['recipient_name'] ) );
+                    $doc_type = sanitize_text_field( trim( $_POST['document_type'] ) );
+                    $date_issued = sanitize_text_field( trim( $_POST['date_issued'] ) );
+                    $status = sanitize_text_field( trim( $_POST['status'] ) );
+                    $notes = sanitize_text_field( trim( $_POST['notes'] ) );
+
+                    if ( empty( $serial ) || empty( $recipient ) || empty( $doc_type ) || empty( $date_issued ) || empty( $status ) ) {
+                        $success_notification = 'Error: All fields except notes are required.';
+                    } else {
+                        $certificates[$serial] = [
+                            'recipient' => $recipient,
+                            'doc_type' => $doc_type,
+                            'date_issued' => $date_issued,
+                            'status' => $status,
+                            'notes' => $notes,
+                        ];
+                        update_option( 'healthedia_certificates', $certificates );
+                        $success_notification = 'Verification record added successfully!';
+                    }
+                } elseif ( $cert_action === 'delete' ) {
+                    $serial = sanitize_text_field( $_POST['serial_number'] );
+                    if ( isset( $certificates[$serial] ) ) {
+                        unset( $certificates[$serial] );
+                        update_option( 'healthedia_certificates', $certificates );
+                        $success_notification = 'Verification record deleted successfully!';
+                    }
+                }
+            }
         }
     }
+}
+
+// Initialize Default Certificate options if empty
+$certificates = get_option( 'healthedia_certificates' );
+if ( ! is_array( $certificates ) ) {
+    $certificates = [
+        'HE-8492-X' => [
+            'recipient' => 'Dr. Mabrouk',
+            'doc_type' => 'Clinical Hydration Certificate',
+            'date_issued' => '2026-03-12',
+            'status' => 'Active',
+            'notes' => 'Authorized by Sports Physiology & Hydration division.'
+        ],
+        'HE-2041-Y' => [
+            'recipient' => 'Professor Alan Turing',
+            'doc_type' => 'Elite Athlete Biomechanical Performance Record',
+            'date_issued' => '1952-06-23',
+            'status' => 'Archived',
+            'notes' => 'Historic scientific credential reference.'
+        ]
+    ];
+    update_option( 'healthedia_certificates', $certificates );
 }
 
 // Read current values for rendering
@@ -657,6 +718,10 @@ if ( ! empty( $display_name ) ) {
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                     Settings
                 </button>
+                <button class="healthedia-sidebar-item" data-section="verification-admin" id="sidebar-tab-verification-admin">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    Verification Portal
+                </button>
             </nav>
 
             <div class="healthedia-sidebar-footer">
@@ -1012,6 +1077,116 @@ if ( ! empty( $display_name ) ) {
 
                 </div>
 
+                <!-- SECTION 6: VERIFICATION PORTAL ADMINISTRATIVE MANAGEMENT -->
+                <div class="healthedia-dashboard-section-view" id="sec-verification-admin">
+
+                    <!-- Admin Panel Area A: Create Certificate Record -->
+                    <div class="healthedia-settings-card" style="margin-bottom: 24px;">
+                        <h3 class="healthedia-settings-title">Add Verification Record</h3>
+                        <p class="healthedia-settings-desc">Register a new certificate, professional credential, or official document to the database.</p>
+
+                        <form method="POST" id="form-add-verification">
+                            <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
+                            <input type="hidden" name="healthedia_dashboard_action" value="manage_verification">
+                            <input type="hidden" name="cert_action" value="add">
+
+                            <div class="healthedia-form-row">
+                                <label class="healthedia-form-label" for="new_serial">Serial Number (Unique)</label>
+                                <input type="text" name="serial_number" id="new_serial" class="healthedia-input-field" placeholder="e.g. HE-9402-A" required style="max-width: 400px;">
+                            </div>
+
+                            <div class="healthedia-form-row">
+                                <label class="healthedia-form-label" for="new_recipient">Recipient Name</label>
+                                <input type="text" name="recipient_name" id="new_recipient" class="healthedia-input-field" placeholder="e.g. Dr. John Doe" required style="max-width: 400px;">
+                            </div>
+
+                            <div class="healthedia-form-row">
+                                <label class="healthedia-form-label" for="new_doc_type">Document Type</label>
+                                <input type="text" name="document_type" id="new_doc_type" class="healthedia-input-field" placeholder="e.g. Clinical Hydration Certificate" required style="max-width: 400px;">
+                            </div>
+
+                            <div class="healthedia-form-row">
+                                <label class="healthedia-form-label" for="new_date_issued">Date Issued</label>
+                                <input type="date" name="date_issued" id="new_date_issued" class="healthedia-input-field" required style="max-width: 400px;">
+                            </div>
+
+                            <div class="healthedia-form-row">
+                                <label class="healthedia-form-label" for="new_status">Status</label>
+                                <select name="status" id="new_status" class="healthedia-select-input" style="max-width: 400px;">
+                                    <option value="Active">Active</option>
+                                    <option value="Archived">Archived</option>
+                                    <option value="Revoked">Revoked</option>
+                                </select>
+                            </div>
+
+                            <div class="healthedia-form-row">
+                                <label class="healthedia-form-label" for="new_notes">Additional Notes</label>
+                                <textarea name="notes" id="new_notes" class="healthedia-input-field" placeholder="Optional comments..." style="max-width: 400px; height: 80px; padding-top: 10px;"></textarea>
+                            </div>
+
+                            <button type="submit" class="healthedia-btn-save" style="margin-top: 16px; padding: 12px 24px; max-width: 250px;" id="verification-add-submit-btn">ADD VERIFICATION RECORD</button>
+                        </form>
+                    </div>
+
+                    <!-- Admin Panel Area B: List Certificate Records -->
+                    <div class="healthedia-settings-card">
+                        <h3 class="healthedia-settings-title">Active Verification Records</h3>
+                        <p class="healthedia-settings-desc">Review, search, and delete registered verification reference entries.</p>
+
+                        <div style="overflow-x: auto; margin-top: 16px;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid #e5e5e5; color: #666666; font-weight: 700;">
+                                        <th style="padding: 12px;">Serial Number</th>
+                                        <th style="padding: 12px;">Recipient</th>
+                                        <th style="padding: 12px;">Document Type</th>
+                                        <th style="padding: 12px;">Date Issued</th>
+                                        <th style="padding: 12px;">Status</th>
+                                        <th style="padding: 12px; text-align: center;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $all_certs = get_option( 'healthedia_certificates', [] );
+                                    if ( empty( $all_certs ) ) :
+                                    ?>
+                                        <tr>
+                                            <td colspan="6" style="padding: 24px; text-align: center; color: #999999; font-style: italic;">No verification records registered yet.</td>
+                                        </tr>
+                                    <?php else : ?>
+                                        <?php foreach ( $all_certs as $serial => $data ) : ?>
+                                            <tr style="border-bottom: 1px solid #f0f0f0; color: #111111;">
+                                                <td style="padding: 12px; font-weight: 700;" class="td-serial-number"><?php echo esc_html( $serial ); ?></td>
+                                                <td style="padding: 12px;" class="td-recipient"><?php echo esc_html( $data['recipient'] ); ?></td>
+                                                <td style="padding: 12px;" class="td-doc-type"><?php echo esc_html( $data['doc_type'] ); ?></td>
+                                                <td style="padding: 12px;" class="td-date-issued"><?php echo esc_html( $data['date_issued'] ); ?></td>
+                                                <td style="padding: 12px;" class="td-status">
+                                                    <span style="padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+                                                        background-color: <?php echo ($data['status'] === 'Active') ? '#e6f6ec' : (($data['status'] === 'Archived') ? '#f0f0f0' : '#fbeae9'); ?>;
+                                                        color: <?php echo ($data['status'] === 'Active') ? '#1b8a4f' : (($data['status'] === 'Archived') ? '#666666' : '#bf271b'); ?>;
+                                                        border: 1px solid <?php echo ($data['status'] === 'Active') ? '#1b8a4f' : (($data['status'] === 'Archived') ? '#cccccc' : '#bf271b'); ?>;">
+                                                        <?php echo esc_html( $data['status'] ); ?>
+                                                    </span>
+                                                </td>
+                                                <td style="padding: 12px; text-align: center;">
+                                                    <form method="POST" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this record?');" class="form-delete-verification">
+                                                        <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
+                                                        <input type="hidden" name="healthedia_dashboard_action" value="manage_verification">
+                                                        <input type="hidden" name="cert_action" value="delete">
+                                                        <input type="hidden" name="serial_number" value="<?php echo esc_attr( $serial ); ?>">
+                                                        <button type="submit" class="healthedia-btn-action delete" style="background: none; border: none; color: #bf271b; font-weight: 600; cursor: pointer; font-size: 13px; padding: 4px 8px;" class="delete-btn">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
             </main>
 
         </div>
@@ -1063,7 +1238,12 @@ if ( ! empty( $display_name ) ) {
 
                     // Update Topbar Title text
                     if (headerTitleLabel) {
-                        headerTitleLabel.textContent = this.textContent.trim() + ' Section';
+                        const btnText = this.textContent.trim();
+                        if (btnText === 'Verification Portal' || btnText === 'Overview' || btnText === 'Logout') {
+                            headerTitleLabel.textContent = btnText;
+                        } else {
+                            headerTitleLabel.textContent = btnText + ' Section';
+                        }
                     }
 
                     // On Mobile, close the sidebar after selection
