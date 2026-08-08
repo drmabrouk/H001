@@ -125,7 +125,6 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
             padding: 40px 20px;
             box-sizing: border-box;
             background-color: #ffffff;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         .healthedia-auth-card {
