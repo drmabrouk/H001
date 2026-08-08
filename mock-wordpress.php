@@ -211,6 +211,18 @@ function wp_verify_nonce( $nonce, $action = -1 ) {
     return $nonce === 'mock_nonce_value';
 }
 
+function wp_create_nonce( $action = -1 ) {
+    return 'mock_nonce_value';
+}
+
+function get_user_meta( $user_id, $key = '', $single = false ) {
+    return get_option( 'user_meta_' . $user_id . '_' . $key, '' );
+}
+
+function update_user_meta( $user_id, $key, $value, $prev_value = '' ) {
+    return update_option( 'user_meta_' . $user_id . '_' . $key, $value );
+}
+
 function selected( $selected, $current = true, $echo = true ) {
     $result = '';
     if ( (string) $selected === (string) $current ) {
@@ -220,6 +232,17 @@ function selected( $selected, $current = true, $echo = true ) {
         echo $result;
     }
     return $result;
+}
+
+// User privilege and capability checks
+function current_user_can( $capability ) {
+    // Only return true if the logged-in user is explicitly designated as an administrator
+    if ( is_user_logged_in() && isset( $_SESSION['current_user_id'] ) ) {
+        if ( $_SESSION['current_user_id'] === 999 ) { // 999 represents mock administrator
+            return true;
+        }
+    }
+    return false;
 }
 
 // Admin page check

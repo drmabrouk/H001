@@ -11,75 +11,79 @@ if ( ! is_user_logged_in() ) {
 
 $success_notification = '';
 
-// Handle POST actions for Settings, Authentication Controls, and Header/Footer Links
+// Handle POST actions for Settings, Authentication Controls, and Header/Footer Links with complete CSRF Nonce Validation
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
-    if ( isset( $_POST['healthedia_dashboard_action'] ) ) {
+    if ( ! isset( $_POST['healthedia_dashboard_nonce'] ) || ! wp_verify_nonce( $_POST['healthedia_dashboard_nonce'], 'healthedia_dashboard_action_nonce' ) ) {
+        $success_notification = 'Security verification failed. Please refresh the page and try again.';
+    } else {
+        if ( isset( $_POST['healthedia_dashboard_action'] ) ) {
 
-        // 1. Save Authentication Settings
-        if ( $_POST['healthedia_dashboard_action'] === 'save_auth_settings' ) {
-            $login_val = isset( $_POST['auth_login'] ) ? sanitize_text_field( $_POST['auth_login'] ) : 'disabled';
-            $reg_val = isset( $_POST['auth_registration'] ) ? sanitize_text_field( $_POST['auth_registration'] ) : 'disabled';
+            // 1. Save Authentication Settings
+            if ( $_POST['healthedia_dashboard_action'] === 'save_auth_settings' ) {
+                $login_val = isset( $_POST['auth_login'] ) ? sanitize_text_field( $_POST['auth_login'] ) : 'disabled';
+                $reg_val = isset( $_POST['auth_registration'] ) ? sanitize_text_field( $_POST['auth_registration'] ) : 'disabled';
 
-            $auth_opts = [
-                'login' => $login_val,
-                'registration' => $reg_val
-            ];
-            update_option( 'healthedia_auth_options', $auth_opts );
-            $success_notification = 'Authentication settings saved successfully!';
-        }
-
-        // 2. Manage Header & Footer Links
-        elseif ( $_POST['healthedia_dashboard_action'] === 'manage_links' ) {
-            $link_type = isset( $_POST['link_type'] ) ? sanitize_text_field( $_POST['link_type'] ) : 'header';
-            $option_name = ( $link_type === 'footer' ) ? 'healthedia_footer_menu' : 'healthedia_header_menu';
-            $menu = get_option( $option_name );
-
-            if ( ! is_array( $menu ) ) {
-                if ( $link_type === 'footer' ) {
-                    $menu = [
-                        ['title' => 'Privacy Policy', 'url' => '#'],
-                        ['title' => 'Terms & Conditions', 'url' => '#'],
-                        ['title' => 'Publication Policies', 'url' => '#'],
-                        ['title' => 'Certificate Verification', 'url' => '#'],
-                        ['title' => 'Support', 'url' => '#']
-                    ];
-                } else {
-                    $menu = [
-                        ['title' => 'Archive Search', 'url' => home_url('/healthedia-search/')],
-                        ['title' => 'Researchers', 'url' => home_url('/healthedia-dashboard/')],
-                        ['title' => 'Institutions', 'url' => '#'],
-                        ['title' => 'Scientific Journal', 'url' => '#']
-                    ];
-                }
+                $auth_opts = [
+                    'login' => $login_val,
+                    'registration' => $reg_val
+                ];
+                update_option( 'healthedia_auth_options', $auth_opts );
+                $success_notification = 'Authentication settings saved successfully!';
             }
 
-            $link_action = isset( $_POST['link_action'] ) ? sanitize_text_field( $_POST['link_action'] ) : '';
-            $index = isset( $_POST['link_index'] ) ? intval( $_POST['link_index'] ) : -1;
+            // 2. Manage Header & Footer Links
+            elseif ( $_POST['healthedia_dashboard_action'] === 'manage_links' ) {
+                $link_type = isset( $_POST['link_type'] ) ? sanitize_text_field( $_POST['link_type'] ) : 'header';
+                $option_name = ( $link_type === 'footer' ) ? 'healthedia_footer_menu' : 'healthedia_header_menu';
+                $menu = get_option( $option_name );
 
-            if ( $link_action === 'add' ) {
-                $title = isset( $_POST['new_title'] ) ? sanitize_text_field( $_POST['new_title'] ) : '';
-                $url = isset( $_POST['new_url'] ) ? sanitize_text_field( $_POST['new_url'] ) : '';
-                if ( ! empty( $title ) && ! empty( $url ) ) {
-                    $menu[] = ['title' => $title, 'url' => $url];
-                    update_option( $option_name, $menu );
-                    $success_notification = 'New page successfully added to ' . esc_html( ucfirst( $link_type ) ) . ' navigation!';
+                if ( ! is_array( $menu ) ) {
+                    if ( $link_type === 'footer' ) {
+                        $menu = [
+                            ['title' => 'Privacy Policy', 'url' => '#'],
+                            ['title' => 'Terms & Conditions', 'url' => '#'],
+                            ['title' => 'Publication Policies', 'url' => '#'],
+                            ['title' => 'Certificate Verification', 'url' => '#'],
+                            ['title' => 'Support', 'url' => '#']
+                        ];
+                    } else {
+                        $menu = [
+                            ['title' => 'Archive Search', 'url' => home_url('/healthedia-search/')],
+                            ['title' => 'Researchers', 'url' => home_url('/healthedia-dashboard/')],
+                            ['title' => 'Institutions', 'url' => '#'],
+                            ['title' => 'Scientific Journal', 'url' => '#']
+                        ];
+                    }
                 }
-            } elseif ( $link_action === 'remove' && $index >= 0 && isset( $menu[$index] ) ) {
-                array_splice( $menu, $index, 1 );
-                update_option( $option_name, $menu );
-                $success_notification = 'Page removed from ' . esc_html( ucfirst( $link_type ) ) . ' navigation!';
-            } elseif ( $link_action === 'move_up' && $index > 0 && isset( $menu[$index] ) ) {
-                $temp = $menu[$index];
-                $menu[$index] = $menu[$index - 1];
-                $menu[$index - 1] = $temp;
-                update_option( $option_name, $menu );
-                $success_notification = esc_html( ucfirst( $link_type ) ) . ' display order updated!';
-            } elseif ( $link_action === 'move_down' && $index >= 0 && $index < count( $menu ) - 1 && isset( $menu[$index] ) ) {
-                $temp = $menu[$index];
-                $menu[$index] = $menu[$index + 1];
-                $menu[$index + 1] = $temp;
-                update_option( $option_name, $menu );
-                $success_notification = esc_html( ucfirst( $link_type ) ) . ' display order updated!';
+
+                $link_action = isset( $_POST['link_action'] ) ? sanitize_text_field( $_POST['link_action'] ) : '';
+                $index = isset( $_POST['link_index'] ) ? intval( $_POST['link_index'] ) : -1;
+
+                if ( $link_action === 'add' ) {
+                    $title = isset( $_POST['new_title'] ) ? sanitize_text_field( $_POST['new_title'] ) : '';
+                    $url = isset( $_POST['new_url'] ) ? sanitize_text_field( $_POST['new_url'] ) : '';
+                    if ( ! empty( $title ) && ! empty( $url ) ) {
+                        $menu[] = ['title' => $title, 'url' => $url];
+                        update_option( $option_name, $menu );
+                        $success_notification = 'New page successfully added to ' . esc_html( ucfirst( $link_type ) ) . ' navigation!';
+                    }
+                } elseif ( $link_action === 'remove' && $index >= 0 && isset( $menu[$index] ) ) {
+                    array_splice( $menu, $index, 1 );
+                    update_option( $option_name, $menu );
+                    $success_notification = 'Page removed from ' . esc_html( ucfirst( $link_type ) ) . ' navigation!';
+                } elseif ( $link_action === 'move_up' && $index > 0 && isset( $menu[$index] ) ) {
+                    $temp = $menu[$index];
+                    $menu[$index] = $menu[$index - 1];
+                    $menu[$index - 1] = $temp;
+                    update_option( $option_name, $menu );
+                    $success_notification = esc_html( ucfirst( $link_type ) ) . ' display order updated!';
+                } elseif ( $link_action === 'move_down' && $index >= 0 && $index < count( $menu ) - 1 && isset( $menu[$index] ) ) {
+                    $temp = $menu[$index];
+                    $menu[$index] = $menu[$index + 1];
+                    $menu[$index + 1] = $temp;
+                    update_option( $option_name, $menu );
+                    $success_notification = esc_html( ucfirst( $link_type ) ) . ' display order updated!';
+                }
             }
         }
     }
@@ -138,6 +142,7 @@ if ( ! empty( $display_name ) ) {
             margin: 0 !important;
             padding: 0 !important;
             background-color: #fafafa !important;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             color: #111111;
         }
 
@@ -848,6 +853,7 @@ if ( ! empty( $display_name ) ) {
                         <p class="healthedia-settings-desc">Toggle the status of login forms and registration wizards globally across the Healthedia plugin.</p>
 
                         <form method="POST">
+                            <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
                             <input type="hidden" name="healthedia_dashboard_action" value="save_auth_settings">
 
                             <div class="healthedia-form-row">
@@ -885,6 +891,7 @@ if ( ! empty( $display_name ) ) {
                                     <div class="healthedia-link-actions">
                                         <!-- Move Up button -->
                                         <form method="POST" style="display:inline;">
+                                            <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
                                             <input type="hidden" name="healthedia_dashboard_action" value="manage_links">
                                             <input type="hidden" name="link_type" value="header">
                                             <input type="hidden" name="link_action" value="move_up">
@@ -894,6 +901,7 @@ if ( ! empty( $display_name ) ) {
 
                                         <!-- Move Down button -->
                                         <form method="POST" style="display:inline;">
+                                            <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
                                             <input type="hidden" name="healthedia_dashboard_action" value="manage_links">
                                             <input type="hidden" name="link_type" value="header">
                                             <input type="hidden" name="link_action" value="move_down">
@@ -903,6 +911,7 @@ if ( ! empty( $display_name ) ) {
 
                                         <!-- Delete item button -->
                                         <form method="POST" style="display:inline;">
+                                            <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
                                             <input type="hidden" name="healthedia_dashboard_action" value="manage_links">
                                             <input type="hidden" name="link_type" value="header">
                                             <input type="hidden" name="link_action" value="remove">
@@ -917,6 +926,7 @@ if ( ! empty( $display_name ) ) {
                         <!-- Add new Header page inline form -->
                         <h4 style="font-size:13px; font-weight:700; margin-bottom:10px;">ADD NEW HEADER LINK</h4>
                         <form method="POST" class="healthedia-inline-add-form" id="form-add-header-link">
+                            <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
                             <input type="hidden" name="healthedia_dashboard_action" value="manage_links">
                             <input type="hidden" name="link_type" value="header">
                             <input type="hidden" name="link_action" value="add">
@@ -948,6 +958,7 @@ if ( ! empty( $display_name ) ) {
                                     <div class="healthedia-link-actions">
                                         <!-- Move Up button -->
                                         <form method="POST" style="display:inline;">
+                                            <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
                                             <input type="hidden" name="healthedia_dashboard_action" value="manage_links">
                                             <input type="hidden" name="link_type" value="footer">
                                             <input type="hidden" name="link_action" value="move_up">
@@ -957,6 +968,7 @@ if ( ! empty( $display_name ) ) {
 
                                         <!-- Move Down button -->
                                         <form method="POST" style="display:inline;">
+                                            <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
                                             <input type="hidden" name="healthedia_dashboard_action" value="manage_links">
                                             <input type="hidden" name="link_type" value="footer">
                                             <input type="hidden" name="link_action" value="move_down">
@@ -966,6 +978,7 @@ if ( ! empty( $display_name ) ) {
 
                                         <!-- Delete item button -->
                                         <form method="POST" style="display:inline;">
+                                            <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
                                             <input type="hidden" name="healthedia_dashboard_action" value="manage_links">
                                             <input type="hidden" name="link_type" value="footer">
                                             <input type="hidden" name="link_action" value="remove">
@@ -980,6 +993,7 @@ if ( ! empty( $display_name ) ) {
                         <!-- Add new Footer page inline form -->
                         <h4 style="font-size:13px; font-weight:700; margin-bottom:10px;">ADD NEW FOOTER LINK</h4>
                         <form method="POST" class="healthedia-inline-add-form" id="form-add-footer-link">
+                            <?php wp_nonce_field( 'healthedia_dashboard_action_nonce', 'healthedia_dashboard_nonce' ); ?>
                             <input type="hidden" name="healthedia_dashboard_action" value="manage_links">
                             <input type="hidden" name="link_type" value="footer">
                             <input type="hidden" name="link_action" value="add">

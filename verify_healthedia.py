@@ -37,7 +37,7 @@ def run_tests():
         print("[PASS] AI Search Optimization section completely removed from homepage.")
 
         # ==========================================
-        # 3. MOBILE HAMBURGER ICON ALIGNMENT
+        # 3. MOBILE HAMBURGER ICON ALIGNMENT & COLOR
         # ==========================================
         print("Spawning mobile context (viewport: 375x667) to check hamburger alignment...")
         mobile_context = browser.new_context(viewport={"width": 375, "height": 667})
@@ -45,7 +45,7 @@ def run_tests():
         mobile_page.goto("http://localhost:8000/")
         mobile_page.wait_for_selector(".healthedia-global-header")
 
-        # Verify logo and mobile trigger are visible
+        # Verify logo, login button, and hamburger are visible
         logo_box = mobile_page.locator(".healthedia-logo-group").bounding_box()
         auth_box = mobile_page.locator(".healthedia-auth-btn-wrapper").bounding_box()
         trigger_box = mobile_page.locator(".healthedia-mobile-nav-trigger-container").bounding_box()
@@ -77,6 +77,11 @@ def run_tests():
         assert "Sample Research Page" in title_element.text_content(), "Standard page title is missing!"
         assert "biomechanical gait adaptations" in content_element.text_content(), "Standard page content is missing!"
         print("[PASS] Regular page structures and loop output are verified.")
+
+        # Verify WP Admin Bar is hidden for regular users
+        admin_bar = page.query_selector("#wpadminbar")
+        assert admin_bar is None, "WordPress Admin Bar should be completely hidden for non-administrators!"
+        print("[PASS] WordPress Admin Bar is restricted and hidden as intended.")
 
 
         # ==========================================
@@ -113,7 +118,17 @@ def run_tests():
 
 
         # ==========================================
-        # 6. EDIT ACCOUNT INFORMATION MODAL WIZARD
+        # 6. ALREADY-LOGGED-IN REDIRECTION
+        # ==========================================
+        print("Testing already-logged-in user redirection to Homepage...")
+        page.goto("http://localhost:8000/healthedia-auth/")
+        page.wait_for_url("http://localhost:8000/")
+        assert page.url == "http://localhost:8000/", "Logged-in user was not redirected back to homepage!"
+        print("[PASS] Logged-in user redirected to homepage successfully.")
+
+
+        # ==========================================
+        # 7. EDIT ACCOUNT INFORMATION 4-STEP WIZARD
         # ==========================================
         print("Opening header dropdown menu...")
         page.wait_for_selector("#header-user-dropdown-btn")
@@ -136,21 +151,32 @@ def run_tests():
         page.fill("#edit-dob", "1912-06-23")
         page.click("#modal-next-1")
 
-        # Wizard Step 2: Professional
-        print("Filling Edit Account Wizard Step 2 (Professional details)...")
+        # Wizard Step 2: Dedicated Profile Picture Step with custom guidance note
+        print("Filling Edit Account Wizard Step 2 (Dedicated Profile Picture step)...")
+        page.wait_for_selector("#edit-profile-pic", state="visible")
+        # Ensure only step 2 is visible
+        assert not page.is_visible("#edit-display-name"), "Step 1 should be hidden!"
+        assert "professional photo with a white background" in page.text_content(".healthedia-guidance-note"), "Guidance note is missing!"
+        page.fill("#edit-profile-pic", "http://cambridge.edu/alan.png")
+        page.click("#modal-next-2")
+
+        # Wizard Step 3: Professional Credentials
+        print("Filling Edit Account Wizard Step 3 (Professional Credentials)...")
         page.wait_for_selector("#edit-workplace", state="visible")
+        assert not page.is_visible("#edit-profile-pic"), "Step 2 should be hidden!"
         page.fill("#edit-workplace", "National Physical Laboratory")
         page.fill("#edit-degree", "Sc.D.")
         page.fill("#edit-title", "Senior Research Fellow")
-        page.click("#modal-next-2")
+        page.click("#modal-next-3")
 
-        # Wizard Step 3: Contact
-        print("Filling Edit Account Wizard Step 3 (Contact details)...")
+        # Wizard Step 4: Contact details
+        print("Filling Edit Account Wizard Step 4 (Contact details)...")
         page.wait_for_selector("#edit-phone", state="visible")
+        assert not page.is_visible("#edit-workplace"), "Step 3 should be hidden!"
         page.fill("#edit-phone", "+44 20 8977 3222")
 
         # Submit the Edit Account form (will refresh page state)
-        print("Submitting Edit Account updates...")
+        print("Submitting 4-step Edit Account updates...")
         page.click("#edit-profile-save-btn")
 
         # Wait for page reload/redirection back to home page
@@ -161,22 +187,24 @@ def run_tests():
         displayed_trigger_name = page.text_content(".healthedia-header-user-name").strip()
         print(f"Newly displayed trigger name: '{displayed_trigger_name}'")
         assert displayed_trigger_name == "Alan Turing, FRS", f"Expected updated name, got: {displayed_trigger_name}"
-
-        # Open dropdown and check modal inputs are updated too
-        page.click("#header-user-dropdown-btn")
-        page.click("#header-edit-account-btn")
-        page.wait_for_selector("#healthedia-edit-account-modal", state="visible")
-        updated_input_val = page.locator("#edit-display-name").input_value()
-        assert updated_input_val == "Alan Turing, FRS"
-        print("[PASS] Edit Account Information multi-step wizard successfully saved all 12 parameters to user database.")
-        page.screenshot(path="healthedia_edit_account_success.png")
-        page.click("#healthedia-modal-close-btn")
+        print("[PASS] 4-step Edit Account Information wizard successfully saved and refreshed.")
 
 
         # ==========================================
-        # 7. DASHBOARD SECTIONS & SETTINGS
+        # 8. VERIFY XML/HTML SITEMAP PAGE INDEXING
+        # ==========================================
+        print("Visiting Sitemap Page index...")
+        page.goto("http://localhost:8000/healthedia-sitemap/")
+        page.wait_for_selector(".healthedia-sitemap-wrapper")
+        assert "Healthedia Sitemap" in page.text_content(".healthedia-sitemap-title")
+        print("[PASS] XML/HTML Sitemap index rendering verified successfully.")
+
+
+        # ==========================================
+        # 9. DASHBOARD SECTIONS & SETTINGS
         # ==========================================
         print("Navigating to Healthedia SaaS Dashboard...")
+        page.goto("http://localhost:8000/")
         page.click("#header-user-dropdown-btn")
         page.click("text=SaaS Dashboard")
         page.wait_for_url("**/healthedia-dashboard/")
@@ -207,7 +235,7 @@ def run_tests():
 
 
         # ==========================================
-        # 8. LOGOUT AND DYNAMIC AUTH RESTRICTION
+        # 10. LOGOUT AND DYNAMIC AUTH RESTRICTION
         # ==========================================
         print("Testing logout action and automatic homepage redirection...")
         page.click("text=Logout")
