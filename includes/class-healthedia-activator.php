@@ -13,8 +13,8 @@ function healthedia_activate_plugin() {
             'title' => 'Archive Search',
             'content' => '[healthedia_search]',
         ],
-        'healthedia-auth' => [
-            'title' => 'Authentication',
+        'login' => [
+            'title' => 'LOGIN TO ARCHIVE',
             'content' => '[healthedia_auth]',
         ],
         'healthedia-dashboard' => [
@@ -79,7 +79,7 @@ function healthedia_activate_plugin() {
 }
 
 function healthedia_deactivate_plugin() {
-    $pages = [ 'healthedia-search', 'healthedia-auth', 'healthedia-dashboard', 'healthedia-sitemap' ];
+    $pages = [ 'healthedia-search', 'login', 'healthedia-dashboard', 'healthedia-sitemap' ];
     foreach ( $pages as $slug ) {
         $page = get_page_by_path( $slug );
         if ( $page ) {

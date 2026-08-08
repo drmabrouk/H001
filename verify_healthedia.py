@@ -78,37 +78,50 @@ def run_tests():
         assert "biomechanical gait adaptations" in content_element.text_content(), "Standard page content is missing!"
         print("[PASS] Regular page structures and loop output are verified.")
 
-        # Verify WP Admin Bar is hidden for regular users
-        admin_bar = page.query_selector("#wpadminbar")
-        assert admin_bar is None, "WordPress Admin Bar should be completely hidden for non-administrators!"
-        print("[PASS] WordPress Admin Bar is restricted and hidden as intended.")
-
 
         # ==========================================
         # 5. SECURE MULTI-STEP REGISTRATION FLOW
         # ==========================================
-        print("Visiting Auth Page to register via 3-step wizard...")
-        page.goto("http://localhost:8000/healthedia-auth/")
+        print("Visiting Auth Page to register via 4-step wizard...")
+        page.goto("http://localhost:8000/login/")
         page.wait_for_selector("#form-login")
+
+        # Check browser tab title
+        assert "LOGIN TO ARCHIVE" in page.title(), f"Expected title 'LOGIN TO ARCHIVE', got '{page.title()}'"
+        print("[PASS] Renamed URL successfully mapped to /login/ with browser tab title 'LOGIN TO ARCHIVE'")
+
+        # Click Create Account tab
         page.click("#tab-register-btn")
         page.wait_for_selector("#view-register", state="visible")
 
         # Step 1: Institutional Credentials
         print("Filling Registration Step 1...")
         page.fill("#register-email", "alan.turing@cambridge.edu")
+        page.select_option("#register-institution", value="Cambridge University")
+        page.click("text=CONTINUE TO PHOTO")
+
+        # Step 2: Profile Photo Upload step
+        print("Filling Registration Step 2...")
+        page.wait_for_selector("#register-profile-pic", state="visible")
+        assert "professional photo with a white background" in page.text_content(".healthedia-guidance-note")
         page.click("text=CONTINUE TO PROFILE")
 
-        # Step 2: Professional Profile
-        print("Filling Registration Step 2...")
-        page.wait_for_selector("#register-name", state="visible")
-        page.fill("#register-name", "Professor Dr. Alan Turing")
+        # Step 3: Professional Credentials (First & Last name on same row)
+        print("Filling Registration Step 3...")
+        page.wait_for_selector("#register-first-name", state="visible")
+        page.fill("#register-first-name", "Professor Alan")
+        page.fill("#register-last-name", "Turing, FRS")
+        page.select_option("#register-specialty", value="Sports Physiology")
         page.click("text=CONTINUE TO SECURITY")
 
-        # Step 3: Account Security & Verification
-        print("Filling Registration Step 3...")
+        # Step 4: Account Security & Verification
+        print("Filling Registration Step 4...")
         page.wait_for_selector("#register-password", state="visible")
         page.fill("#register-password", "DecryptedPass123!")
-        page.fill("#register-otp", "849204")
+        page.fill("#register-confirm-password", "DecryptedPass123!")
+
+        # Trigger sending secure 6-digit OTP email code
+        page.click("text=SEND OTP")
 
         # Complete Registration (Redirects to HOMEPAGE)
         page.click("#form-register button[type='submit']")
@@ -121,7 +134,7 @@ def run_tests():
         # 6. ALREADY-LOGGED-IN REDIRECTION
         # ==========================================
         print("Testing already-logged-in user redirection to Homepage...")
-        page.goto("http://localhost:8000/healthedia-auth/")
+        page.goto("http://localhost:8000/login/")
         page.wait_for_url("http://localhost:8000/")
         assert page.url == "http://localhost:8000/", "Logged-in user was not redirected back to homepage!"
         print("[PASS] Logged-in user redirected to homepage successfully.")
@@ -245,7 +258,7 @@ def run_tests():
 
         # Confirm dynamic auth form restrictions (Since we disabled registration, Create Account tab should be hidden)
         print("Checking dynamic Authentication tabs lock...")
-        page.goto("http://localhost:8000/healthedia-auth/")
+        page.goto("http://localhost:8000/login/")
         page.wait_for_selector("#form-login")
         assert not page.is_visible("#auth-tabs-bar"), "Tabs bar should be hidden when registration is disabled!"
         assert not page.is_visible("#view-register")

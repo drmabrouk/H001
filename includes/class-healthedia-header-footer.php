@@ -8,23 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Output the custom Healthedia global header.
+ * Handle Profile Update POST action on 'init' hook to prevent redirects during active output buffering.
  */
-function healthedia_get_header() {
-    $current_url = $_SERVER['REQUEST_URI'];
-    $is_search = ( strpos( $current_url, 'healthedia-search' ) !== false || $current_url === '/' || $current_url === '/index.php' || is_front_page() );
-    $is_auth = ( strpos( $current_url, 'healthedia-auth' ) !== false );
-    $is_dashboard = ( strpos( $current_url, 'healthedia-dashboard' ) !== false );
-
-    $home_url = esc_url( home_url( '/' ) );
-    $auth_url = esc_url( home_url( '/healthedia-auth/' ) );
-    $search_url = esc_url( home_url( '/healthedia-search/' ) );
-    $dashboard_url = esc_url( home_url( '/healthedia-dashboard/' ) );
-
-    $active_search = $is_search ? 'active' : '';
-    $active_dashboard = $is_dashboard ? 'active' : '';
-
-    // Handle Profile Update POST action
+function healthedia_handle_profile_update() {
     if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
         if ( isset( $_POST['healthedia_action'] ) && $_POST['healthedia_action'] === 'update_profile' ) {
             if ( isset( $_POST['healthedia_auth_nonce'] ) && wp_verify_nonce( $_POST['healthedia_auth_nonce'], 'healthedia_auth_action' ) ) {
@@ -58,6 +44,26 @@ function healthedia_get_header() {
             }
         }
     }
+}
+add_action( 'init', 'healthedia_handle_profile_update' );
+add_action( 'template_redirect', 'healthedia_handle_profile_update', 0 ); // Priority 0 to run before output buffering starts!
+
+/**
+ * Output the custom Healthedia global header.
+ */
+function healthedia_get_header() {
+    $current_url = $_SERVER['REQUEST_URI'];
+    $is_search = ( strpos( $current_url, 'healthedia-search' ) !== false || $current_url === '/' || $current_url === '/index.php' || is_front_page() );
+    $is_auth = ( strpos( $current_url, 'healthedia-auth' ) !== false );
+    $is_dashboard = ( strpos( $current_url, 'healthedia-dashboard' ) !== false );
+
+    $home_url = esc_url( home_url( '/' ) );
+    $auth_url = esc_url( home_url( '/login/' ) );
+    $search_url = esc_url( home_url( '/healthedia-search/' ) );
+    $dashboard_url = esc_url( home_url( '/healthedia-dashboard/' ) );
+
+    $active_search = $is_search ? 'active' : '';
+    $active_dashboard = $is_dashboard ? 'active' : '';
 
     // Load Header Menu from options dynamically
     $header_menu = get_option( 'healthedia_header_menu' );
@@ -727,17 +733,207 @@ function healthedia_get_header() {
             flex-direction: column;
             gap: 12px;
         }
+
+        /* Complete Premium Styles for Edit Account Modal & Wizard Steps */
+        .healthedia-modal-card {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            opacity: 1 !important;
+            border: 1px solid var(--healthedia-border);
+            z-index: 1000002 !important;
+        }
+
+        .healthedia-modal-fieldset {
+            display: none;
+            width: 100%;
+        }
+
+        .healthedia-modal-fieldset.active {
+            display: block !important;
+        }
+
+        /* Step Indicators in Modal */
+        .healthedia-modal-card .healthedia-wizard-steps-indicator {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            margin-bottom: 25px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            flex-direction: row !important; /* Force horizontal alignment! */
+        }
+
+        .healthedia-modal-card .healthedia-wizard-indicator-dot {
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 50% !important;
+            background-color: #f0f0f0 !important;
+            color: #999999 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            transition: all 0.2s ease !important;
+            box-sizing: border-box !important;
+            flex-shrink: 0 !important;
+        }
+
+        .healthedia-modal-card .healthedia-wizard-indicator-dot.active {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }
+
+        .healthedia-modal-card .healthedia-wizard-indicator-dot.completed {
+            background-color: #e6f6ec !important;
+            color: #1b8a4f !important;
+        }
+
+        .healthedia-modal-card .healthedia-wizard-indicator-line {
+            height: 2px !important;
+            width: 25px !important;
+            background-color: #e5e5e5 !important;
+            flex-grow: 1 !important;
+            max-width: 40px !important;
+        }
+
+        .healthedia-modal-card .healthedia-wizard-indicator-line.active {
+            background-color: #000000 !important;
+        }
+
+        /* Modal Forms & Input Fields */
+        .healthedia-form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            text-align: left;
+            box-sizing: border-box;
+        }
+
+        .healthedia-form-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #111111;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .healthedia-input-field {
+            width: 100% !important;
+            background-color: #ffffff !important;
+            border: 1px solid #dddddd !important;
+            border-radius: 12px !important;
+            padding: 12px 16px !important;
+            box-sizing: border-box !important;
+            font-size: 14px !important;
+            font-family: inherit !important;
+            color: #333333 !important;
+            outline: none !important;
+            height: 46px !important;
+            transition: border-color 0.2s ease !important;
+        }
+
+        .healthedia-input-field:focus {
+            border-color: #000000 !important;
+        }
+
+        .healthedia-select-input {
+            width: 100% !important;
+            background-color: #ffffff !important;
+            border: 1px solid #dddddd !important;
+            border-radius: 12px !important;
+            padding: 0 16px !important;
+            box-sizing: border-box !important;
+            font-size: 14px !important;
+            font-family: inherit !important;
+            color: #333333 !important;
+            outline: none !important;
+            height: 46px !important;
+            line-height: 46px !important;
+            transition: border-color 0.2s ease !important;
+            appearance: none !important;
+            background-image: url(\"data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23999%22%20stroke-width%3D%222%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C/polyline%3E%3C/svg%3E\") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 16px center !important;
+        }
+
+        .healthedia-select-input:focus {
+            border-color: #000000 !important;
+        }
+
+        /* Modal Actions & Buttons */
+        .healthedia-modal-card .healthedia-auth-submit {
+            width: 100% !important;
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 14px 0 !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            cursor: pointer !important;
+            transition: opacity 0.2s ease, transform 0.2s ease !important;
+            text-align: center !important;
+            display: block !important;
+        }
+
+        .healthedia-modal-card .healthedia-auth-submit:hover {
+            opacity: 0.9 !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .healthedia-modal-card .healthedia-wizard-actions {
+            display: flex !important;
+            gap: 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .healthedia-modal-card .healthedia-auth-btn-secondary {
+            flex: 1 !important;
+            background-color: #f4f4f4 !important;
+            color: #333333 !important;
+            border: 1px solid #e5e5e5 !important;
+            border-radius: 12px !important;
+            padding: 14px 0 !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s ease !important;
+            text-align: center !important;
+            display: block !important;
+        }
+
+        .healthedia-modal-card .healthedia-auth-btn-secondary:hover {
+            background-color: #e5e5e5 !important;
+        }
     </style>
 
     <script id="healthedia-header-script">
         // Helper multi-step navigation for modal wizard
         function nextModalStep(step) {
-            document.getElementById("modal-fieldset-1").style.display = "none";
-            document.getElementById("modal-fieldset-2").style.display = "none";
-            document.getElementById("modal-fieldset-3").style.display = "none";
-            document.getElementById("modal-fieldset-4").style.display = "none";
+            // Hide all fieldsets by setting style.display to none and removing active class
+            for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById("modal-fieldset-" + i);
+                if (el) {
+                    el.style.display = "none";
+                    el.classList.remove("active");
+                }
+            }
 
-            document.getElementById("modal-fieldset-" + step).style.display = "block";
+            // Show current step fieldset
+            const currentEl = document.getElementById("modal-fieldset-" + step);
+            if (currentEl) {
+                currentEl.style.display = "block";
+                currentEl.classList.add("active");
+            }
 
             // Update indicators
             document.getElementById("modal-dot-1").className = "healthedia-wizard-indicator-dot " + (step > 1 ? "completed" : "active");
