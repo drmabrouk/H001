@@ -33,3 +33,28 @@ require_once HEALTHEDIA_PATH . 'includes/class-healthedia-header-footer.php';
 // Register activation and deactivation hooks
 register_activation_hook( __FILE__, 'healthedia_activate_plugin' );
 register_deactivation_hook( __FILE__, 'healthedia_deactivate_plugin' );
+
+/**
+ * Disable WordPress admin bar for any regular or non-administrator users.
+ */
+function healthedia_disable_admin_bar( $show ) {
+    if ( ! current_user_can( 'administrator' ) ) {
+        return false;
+    }
+    return $show;
+}
+add_filter( 'show_admin_bar', 'healthedia_disable_admin_bar' );
+
+/**
+ * Restrict WordPress administrative dashboard access to administrators only.
+ */
+function healthedia_restrict_admin_access() {
+    if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+        return;
+    }
+    if ( ! current_user_can( 'administrator' ) ) {
+        wp_safe_redirect( home_url( '/' ) );
+        exit;
+    }
+}
+add_action( 'admin_init', 'healthedia_restrict_admin_access' );

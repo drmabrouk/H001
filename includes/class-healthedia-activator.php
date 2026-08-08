@@ -21,6 +21,10 @@ function healthedia_activate_plugin() {
             'title' => 'Dashboard',
             'content' => '[healthedia_dashboard]',
         ],
+        'healthedia-sitemap' => [
+            'title' => 'Sitemap',
+            'content' => '[healthedia_sitemap]',
+        ],
     ];
 
     foreach ( $pages as $slug => $page_info ) {
@@ -75,7 +79,7 @@ function healthedia_activate_plugin() {
 }
 
 function healthedia_deactivate_plugin() {
-    $pages = [ 'healthedia-search', 'healthedia-auth', 'healthedia-dashboard' ];
+    $pages = [ 'healthedia-search', 'healthedia-auth', 'healthedia-dashboard', 'healthedia-sitemap' ];
     foreach ( $pages as $slug ) {
         $page = get_page_by_path( $slug );
         if ( $page ) {

@@ -3,6 +3,12 @@
  * Template Name: Authentication Page
  */
 
+// If a user opens the Login or Registration page while already logged in, automatically redirect to homepage immediately
+if ( is_user_logged_in() ) {
+    wp_safe_redirect( home_url( '/' ) );
+    exit;
+}
+
 $error_message = '';
 $success_message = '';
 

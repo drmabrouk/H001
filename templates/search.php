@@ -16,18 +16,18 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 80px 20px;
+            padding: 20px; /* Reduced vertical padding */
             max-width: 900px;
             margin: 0 auto;
             box-sizing: border-box;
-            min-height: calc(100vh - 280px);
+            min-height: calc(100vh - 120px); /* Fill remaining viewport space nicely */
         }
 
         .healthedia-search-title {
             font-size: 64px;
             font-weight: 800;
             color: #000000;
-            margin: 0;
+            margin: 0 0 4px 0; /* Compact spacing */
             letter-spacing: -1.5px;
             line-height: 1.05;
         }
@@ -37,24 +37,24 @@
             font-weight: 700;
             color: #999999;
             letter-spacing: 2px;
-            margin-top: 15px;
-            margin-bottom: 20px;
+            margin-top: 4px;
+            margin-bottom: 12px;
             text-transform: uppercase;
         }
 
         .healthedia-search-divider {
-            width: 50px;
+            width: 40px;
             height: 3px;
             background-color: #000000;
-            margin-bottom: 25px;
+            margin-bottom: 12px;
         }
 
         .healthedia-search-description {
-            font-size: 16px;
+            font-size: 15px;
             color: #888888;
             max-width: 620px;
-            line-height: 1.6;
-            margin-bottom: 40px;
+            line-height: 1.5;
+            margin-bottom: 20px; /* Compact margin to fit single viewport */
             font-weight: 500;
         }
 
