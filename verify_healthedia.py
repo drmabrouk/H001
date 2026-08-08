@@ -180,6 +180,46 @@ def run_tests():
         assert "LOGIN" in login_btn_text, f"Expected 'LOGIN' button, got: {login_btn_text}"
         print("[PASS] Successfully logged out and verified header state.")
 
+        # 9. Mobile Viewport Layout Verification
+        print("Starting Mobile layout optimization checks (viewport: 375x667)...")
+        mobile_context = browser.new_context(viewport={"width": 375, "height": 667})
+        mobile_page = mobile_context.new_page()
+        mobile_page.goto("http://localhost:8000/")
+        mobile_page.wait_for_selector(".healthedia-global-header")
+
+        # Verify Logo & Login are on the same row, and nav is placed below
+        logo_box = mobile_page.locator(".healthedia-logo-group").bounding_box()
+        auth_box = mobile_page.locator(".healthedia-auth-btn-wrapper").bounding_box()
+        nav_box = mobile_page.locator(".healthedia-nav").bounding_box()
+
+        assert logo_box is not None, "Logo should be visible on mobile"
+        assert auth_box is not None, "Auth button should be visible on mobile"
+        assert nav_box is not None, "Nav bar should be visible on mobile"
+
+        print(f"Mobile Coordinates - Logo Y: {logo_box['y']}, Auth Y: {auth_box['y']}, Nav Y: {nav_box['y']}")
+
+        # Verify Logo and Auth are roughly on the same row (Y coordinate difference <= 15px)
+        assert abs(logo_box['y'] - auth_box['y']) <= 15, "Logo and Auth button should be on the same row on mobile"
+        print("[PASS] Logo and Auth button are successfully placed on the same top row on mobile.")
+
+        # Verify Nav is positioned on the second row (Nav Y > Logo Y)
+        assert nav_box['y'] > logo_box['y'], "Nav menu should wrap to a separate row on mobile"
+        print("[PASS] Navigation menu wraps cleanly to a separate row underneath logo/auth on mobile.")
+
+        # Check that footer dots are hidden on mobile
+        footer_dot = mobile_page.query_selector(".healthedia-footer-dot")
+        if footer_dot:
+            # Check if it has display: none or is invisible
+            is_visible = footer_dot.is_visible()
+            assert not is_visible, "Footer separators should be invisible on mobile screens"
+        print("[PASS] Footer separators are correctly hidden on mobile viewport.")
+
+        # Save mobile layout screenshot
+        mobile_screenshot_path = "healthedia_mobile_layout_screenshot.png"
+        mobile_page.screenshot(path=mobile_screenshot_path)
+        print(f"[PASS] Mobile layout screenshot saved to {mobile_screenshot_path}")
+
+        mobile_context.close()
         browser.close()
 
 if __name__ == "__main__":
