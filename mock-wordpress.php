@@ -211,9 +211,46 @@ function wp_verify_nonce( $nonce, $action = -1 ) {
     return $nonce === 'mock_nonce_value';
 }
 
+function selected( $selected, $current = true, $echo = true ) {
+    $result = '';
+    if ( (string) $selected === (string) $current ) {
+        $result = ' selected="selected"';
+    }
+    if ( $echo ) {
+        echo $result;
+    }
+    return $result;
+}
+
 // Admin page check
 function is_admin() {
     return false;
+}
+
+// Loop simulation helpers & mock database
+$mock_posts = [];
+$loop_index = 0;
+
+function have_posts() {
+    global $mock_posts, $loop_index;
+    return $loop_index < count( $mock_posts );
+}
+
+function the_post() {
+    global $loop_index;
+    $loop_index++;
+}
+
+function the_title() {
+    global $mock_posts, $loop_index;
+    $current = $mock_posts[$loop_index - 1] ?? null;
+    echo $current ? esc_html( $current['title'] ) : 'Page Title';
+}
+
+function the_content() {
+    global $mock_posts, $loop_index;
+    $current = $mock_posts[$loop_index - 1] ?? null;
+    echo $current ? $current['content'] : 'Page Content';
 }
 
 // Router simulation helpers
@@ -229,6 +266,16 @@ function is_page( $page = '' ) {
     return $current_route === $page;
 }
 
+// Initialize loop database if we are visiting standard sample page
+if ( $current_route === 'sample-page' ) {
+    $mock_posts = [
+        [
+            'title' => 'Sample Research Page',
+            'content' => '<p>This is a standard theme presentation page content demonstrating biomechanical gait adaptations and open-access index values.</p>'
+        ]
+    ];
+}
+
 function wp_insert_post( $args ) {
     return 1;
 }
@@ -241,17 +288,18 @@ function wp_delete_post( $id, $force = true ) {
     return true;
 }
 
-// Handle metadata options
-$options = [];
+// Handle metadata options (backed by PHP Session for cross-request persistence)
+if ( ! isset( $_SESSION['options'] ) ) {
+    $_SESSION['options'] = [];
+}
+
 function update_option( $name, $value ) {
-    global $options;
-    $options[$name] = $value;
+    $_SESSION['options'][$name] = $value;
     return true;
 }
 
 function get_option( $name, $default = false ) {
-    global $options;
-    return isset( $options[$name] ) ? $options[$name] : $default;
+    return isset( $_SESSION['options'][$name] ) ? $_SESSION['options'][$name] : $default;
 }
 
 function plugin_dir_path( $file ) {

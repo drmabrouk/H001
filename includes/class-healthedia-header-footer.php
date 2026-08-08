@@ -24,6 +24,35 @@ function healthedia_get_header() {
     $active_search = $is_search ? 'active' : '';
     $active_dashboard = $is_dashboard ? 'active' : '';
 
+    // Load Header Menu from options dynamically
+    $header_menu = get_option( 'healthedia_header_menu' );
+    if ( ! is_array( $header_menu ) ) {
+        $header_menu = [
+            ['title' => 'Archive Search', 'url' => home_url('/healthedia-search/')],
+            ['title' => 'Researchers', 'url' => home_url('/healthedia-dashboard/')],
+            ['title' => 'Institutions', 'url' => '#'],
+            ['title' => 'Scientific Journal', 'url' => '#']
+        ];
+    }
+
+    $nav_html = '';
+    foreach ( $header_menu as $item ) {
+        $item_url = esc_url( $item['url'] );
+        $item_title = esc_html( $item['title'] );
+
+        // Determine active class
+        $active_class = '';
+        if ( strpos( $current_url, 'healthedia-search' ) !== false && strpos( $item_url, 'healthedia-search' ) !== false ) {
+            $active_class = 'active';
+        } elseif ( strpos( $current_url, 'healthedia-dashboard' ) !== false && strpos( $item_url, 'healthedia-dashboard' ) !== false ) {
+            $active_class = 'active';
+        } elseif ( $current_url === '/' && strpos( $item_url, 'healthedia-search' ) !== false ) {
+            $active_class = 'active';
+        }
+
+        $nav_html .= '<a href="' . $item_url . '" class="healthedia-nav-item ' . $active_class . '">' . $item_title . '</a>';
+    }
+
     $auth_area = '';
     if ( is_user_logged_in() ) {
         $current_user = wp_get_current_user();
@@ -80,21 +109,21 @@ function healthedia_get_header() {
                     <span class="healthedia-logo-sub">GLOBAL HEALTH ARCHIVE</span>
                 </a>
 
-                <!-- Navigation Links - Shifted directly to the right of the logo -->
+                <!-- Desktop Navigation Links -->
                 <nav class="healthedia-nav">
-                    <a href="' . $search_url . '" class="healthedia-nav-item ' . $active_search . '">
-                        Archive Search
-                    </a>
-                    <a href="' . $dashboard_url . '" class="healthedia-nav-item ' . $active_dashboard . '">
-                        Researchers
-                    </a>
-                    <a href="#" class="healthedia-nav-item">
-                        Institutions
-                    </a>
-                    <a href="#" class="healthedia-nav-item">
-                        Scientific Journal
-                    </a>
+                    ' . $nav_html . '
                 </nav>
+
+                <!-- Mobile Dropdown Navigation Trigger -->
+                <div class="healthedia-mobile-nav-trigger-container" id="healthedia-mobile-trigger-container">
+                    <button class="healthedia-mobile-menu-btn" id="mobile-menu-toggle-btn">
+                        <span>MENU</span>
+                        <svg class="healthedia-dropdown-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="healthedia-mobile-dropdown-menu" id="mobile-dropdown-menu-list">
+                        ' . $nav_html . '
+                    </div>
+                </div>
             </div>
 
             <!-- Right-aligned Authentication Area -->
@@ -265,7 +294,7 @@ function healthedia_get_header() {
             position: absolute;
             right: 0;
             top: calc(100% + 10px);
-            background: var(--healthedia-white);
+            background: #ffffff !important; /* Robust solid white background */
             border: 1px solid var(--healthedia-border);
             border-radius: 16px;
             width: 220px;
@@ -339,56 +368,94 @@ function healthedia_get_header() {
             color: #bf271b;
         }
 
+        /* Desktop specific mobile menu display reset */
+        .healthedia-mobile-nav-trigger-container {
+            display: none;
+        }
+
         /* Mobile layout optimization */
         @media (max-width: 768px) {
             .healthedia-header-container {
                 border-radius: 20px;
-                height: auto;
+                height: 60px;
                 padding: 12px 16px;
-                display: grid !important;
-                grid-template-columns: 1fr auto !important;
-                grid-template-rows: auto auto !important;
-                row-gap: 12px;
-                column-gap: 8px;
-                align-items: center;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
             }
             .healthedia-header-left-group {
-                display: contents !important;
-            }
-            .healthedia-logo-group {
-                grid-column: 1 / 2;
-                grid-row: 1 / 2;
-                justify-self: start;
-            }
-            .healthedia-auth-btn-wrapper {
-                grid-column: 2 / 3;
-                grid-row: 1 / 2;
-                justify-self: end;
+                display: flex !important;
+                align-items: center !important;
+                gap: 12px !important;
             }
             .healthedia-nav {
-                grid-column: 1 / 3;
-                grid-row: 2 / 3;
+                display: none !important; /* Hide desktop linear navigation menu completely */
+            }
+
+            /* Mobile Navigation Dropdown */
+            .healthedia-mobile-nav-trigger-container {
+                display: inline-block !important;
+                position: relative;
+            }
+            .healthedia-mobile-menu-btn {
+                background: none;
+                border: 1px solid var(--healthedia-border);
+                border-radius: 20px;
+                padding: 6px 14px;
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--healthedia-black);
                 display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
                 align-items: center;
                 gap: 6px;
-                overflow-x: auto;
-                white-space: nowrap;
-                width: 100%;
-                padding: 4px 0 6px 0;
-                -webkit-overflow-scrolling: touch;
-                -ms-overflow-style: none;  /* IE and Edge */
-                scrollbar-width: none;  /* Firefox */
+                cursor: pointer;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
-            .healthedia-nav::-webkit-scrollbar {
-                display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+            .healthedia-mobile-menu-btn:hover {
+                border-color: var(--healthedia-black);
             }
-            .healthedia-nav-item {
-                font-size: 13px;
-                padding: 6px 12px;
-                flex-shrink: 0; /* Do not shrink navigation links */
+            .healthedia-mobile-dropdown-menu {
+                display: none;
+                position: absolute;
+                left: 0;
+                top: calc(100% + 8px);
+                background-color: #ffffff !important; /* Force solid white background */
+                background: #ffffff !important;
+                border: 1px solid var(--healthedia-border) !important;
+                border-radius: 12px;
+                width: 180px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.12) !important;
+                padding: 8px;
+                box-sizing: border-box;
+                z-index: 100000 !important; /* Ensure it floats above background content */
+                animation: mobileDropdownFadeIn 0.2s ease;
             }
+            .healthedia-mobile-nav-trigger-container.open .healthedia-mobile-dropdown-menu {
+                display: block !important;
+            }
+            @keyframes mobileDropdownFadeIn {
+                from { opacity: 0; transform: translateY(6px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .healthedia-mobile-dropdown-menu .healthedia-nav-item {
+                display: block !important;
+                padding: 10px 14px !important;
+                font-size: 13px !important;
+                font-weight: 600 !important;
+                color: var(--healthedia-grey) !important;
+                text-decoration: none !important;
+                border-radius: 8px !important;
+                transition: all 0.2s ease !important;
+                text-align: left !important;
+                background: none !important;
+            }
+            .healthedia-mobile-dropdown-menu .healthedia-nav-item:hover,
+            .healthedia-mobile-dropdown-menu .healthedia-nav-item.active {
+                background-color: var(--healthedia-light-grey) !important;
+                color: var(--healthedia-black) !important;
+            }
+
             .healthedia-btn-login {
                 padding: 8px 18px;
                 font-size: 12px;
@@ -414,6 +481,7 @@ function healthedia_get_header() {
 
     <script id="healthedia-header-script">
         document.addEventListener(\'DOMContentLoaded\', function() {
+            // Deskop user profile dropdown
             const dropdownContainer = document.getElementById(\'healthedia-header-dropdown\');
             const dropdownBtn = document.getElementById(\'header-user-dropdown-btn\');
 
@@ -429,6 +497,23 @@ function healthedia_get_header() {
                     }
                 });
             }
+
+            // Mobile menu navigation dropdown
+            const mobileTrigger = document.getElementById(\'healthedia-mobile-trigger-container\');
+            const mobileBtn = document.getElementById(\'mobile-menu-toggle-btn\');
+
+            if (mobileBtn && mobileTrigger) {
+                mobileBtn.addEventListener(\'click\', function(e) {
+                    e.stopPropagation();
+                    mobileTrigger.classList.toggle(\'open\');
+                });
+
+                document.addEventListener(\'click\', function(e) {
+                    if (!mobileTrigger.contains(e.target)) {
+                        mobileTrigger.classList.remove(\'open\');
+                    }
+                });
+            }
         });
     </script>
     ';
@@ -440,6 +525,28 @@ function healthedia_get_header() {
  * Output the custom Healthedia global footer.
  */
 function healthedia_get_footer() {
+    // Load Footer Menu from options dynamically
+    $footer_menu = get_option( 'healthedia_footer_menu' );
+    if ( ! is_array( $footer_menu ) ) {
+        $footer_menu = [
+            ['title' => 'Privacy Policy', 'url' => '#'],
+            ['title' => 'Terms & Conditions', 'url' => '#'],
+            ['title' => 'Publication Policies', 'url' => '#'],
+            ['title' => 'Certificate Verification', 'url' => '#'],
+            ['title' => 'Support', 'url' => '#']
+        ];
+    }
+
+    $footer_links_html = '';
+    $count = count( $footer_menu );
+    for ( $i = 0; $i < $count; $i++ ) {
+        $item = $footer_menu[$i];
+        $footer_links_html .= '<a href="' . esc_url( $item['url'] ) . '" class="healthedia-footer-link">' . esc_html( $item['title'] ) . '</a>';
+        if ( $i < $count - 1 ) {
+            $footer_links_html .= '<span class="healthedia-footer-dot"></span>';
+        }
+    }
+
     $html = '
     <footer class="healthedia-global-footer">
         <div class="healthedia-footer-container">
@@ -447,15 +554,7 @@ function healthedia_get_footer() {
                 © 2026 Healthedia. All Rights Reserved. Permanent Open-Access Repository.
             </div>
             <div class="healthedia-footer-links">
-                <a href="#" class="healthedia-footer-link">Privacy Policy</a>
-                <span class="healthedia-footer-dot"></span>
-                <a href="#" class="healthedia-footer-link">Terms & Conditions</a>
-                <span class="healthedia-footer-dot"></span>
-                <a href="#" class="healthedia-footer-link">Publication Policies</a>
-                <span class="healthedia-footer-dot"></span>
-                <a href="#" class="healthedia-footer-link">Certificate Verification</a>
-                <span class="healthedia-footer-dot"></span>
-                <a href="#" class="healthedia-footer-link">Support</a>
+                ' . $footer_links_html . '
             </div>
         </div>
     </footer>

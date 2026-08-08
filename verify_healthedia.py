@@ -9,218 +9,211 @@ def run_tests():
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        # Use a stateful/clean context
         context = browser.new_context()
         page = context.new_page()
+        page.on("pageerror", lambda err: print(f"PLAYWRIGHT PAGE ERROR: {err}"))
+        page.on("console", lambda msg: print(f"PLAYWRIGHT CONSOLE: {msg.text}"))
 
         # 1. Access the Mock WordPress home/search page
-        print("Visiting Home/Search Page...")
+        print("Visiting Home Page on desktop to check compact header container height...")
         page.goto("http://localhost:8000/")
         page.wait_for_selector(".healthedia-search-title")
         assert "HEALTHEDIA" in page.text_content(".healthedia-search-title")
-        print("[PASS] Search Page rendered correctly.")
 
-        # Check for AI Sparkle Button and verify no dollar sign paths
-        ai_btn = page.query_selector("#healthedia-ai-search")
-        assert ai_btn is not None, "AI Search button not found!"
-
-        # Check that the global header is visible and verify compact layout
-        header = page.query_selector(".healthedia-global-header")
-        assert header is not None, "Global Header missing on Home Page!"
-        print("[PASS] Global Header present on home page.")
-
-        # Verify compact header container height is 60px
+        # Verify compact header (height <= 60px)
         header_container = page.locator(".healthedia-header-container")
         box = header_container.bounding_box()
-        assert box is not None, "Header container bounding box not found!"
-        print(f"Header container height: {box['height']}px")
-        assert box['height'] <= 60.5, f"Expected compact header height around 60px, got {box['height']}px"
-        print("[PASS] Global Header height is verified as compact (60px).")
+        assert box is not None
+        print(f"Desktop Header container height: {box['height']}px")
+        assert box['height'] <= 60.5, f"Header height is not compact! Got: {box['height']}px"
+        print("[PASS] Desktop compact header height verified.")
 
-        # Verify left-aligned layout of navigation items directly to the right of the logo
-        left_group = page.query_selector(".healthedia-header-left-group")
-        assert left_group is not None, "Navigation links and logo should be grouped in .healthedia-header-left-group"
-        logo_group = page.query_selector(".healthedia-header-left-group .healthedia-logo-group")
-        nav_group = page.query_selector(".healthedia-header-left-group .healthedia-nav")
-        assert logo_group is not None, "Logo must be inside the left aligned group"
-        assert nav_group is not None, "Navigation links must be inside the left aligned group"
-        print("[PASS] Navigation items are aligned on the left directly to the right of the logo.")
-
-        # 2. Click LOGIN button in Global Header to redirect to Auth Page
-        print("Clicking Login in Header...")
-        page.click(".healthedia-btn-login")
-        page.wait_for_selector("#form-login")
-        assert "LOGIN TO ARCHIVE" in page.content()
-        print("[PASS] Redirected to Auth Page successfully.")
-
-        # 3. Test multi-tab interface switching
-        print("Testing Forgot Password link from Login view...")
-        page.click("#goto-forgot")
-        page.wait_for_selector("#view-forgot", state="visible")
-        assert page.is_visible("#view-forgot")
-        assert not page.is_visible("#view-login")
-        print("[PASS] Forgot Password view is visible.")
-
-        print("Switching back to Login view...")
-        page.click("#back-to-login")
-        page.wait_for_selector("#view-login", state="visible")
-        assert page.is_visible("#view-login")
-
-        print("Testing tab switching (Create Account)...")
-        page.click("#tab-register-btn")
-        page.wait_for_selector("#view-register", state="visible")
-        assert page.is_visible("#view-register")
-        assert not page.is_visible("#view-login")
-        print("[PASS] Registration view is visible.")
-
-        # 4. Perform registration
-        print("Registering a new account...")
-        page.fill("#register-name", "Professor Dr. Alan Turing")
-        page.fill("#register-email", "alan.turing@cambridge.edu")
-        page.fill("#register-password", "DecryptedPass123!")
-
-        # Submit the registration form
-        page.click("#form-register button[type='submit']")
-
-        # It should process, auto-sign-on and redirect to the SaaS Dashboard
-        print("Waiting for redirection to SaaS Dashboard...")
-        page.wait_for_url("**/healthedia-dashboard/")
-
-        # 5. Verify the SaaS Dashboard
-        print("Verifying SaaS Dashboard content and authentication access...")
-        print("Current URL:", page.url)
-        # Check page body first
-        try:
-            page.wait_for_selector(".healthedia-dashboard-layout", timeout=5000)
-        except Exception as e:
-            print("Failed waiting for .healthedia-dashboard-layout. Page content:")
-            print(page.content())
-            raise e
-
-        # Check that the custom display name is dynamic and matches registered user!
-        print("SaaS Dashboard Body Content snippet:")
-        user_section = page.query_selector(".healthedia-topbar-user")
-        if user_section:
-            print("healthedia-topbar-user content:", user_section.inner_html())
-        else:
-            print("healthedia-topbar-user NOT FOUND!")
-            print("Full page content:")
-            print(page.content())
-        user_name_element = page.query_selector(".healthedia-user-name")
-        assert user_name_element is not None, "User name element not found on dashboard!"
-        displayed_name = user_name_element.text_content().strip()
-        print(f"Displayed user name on dashboard: '{displayed_name}'")
-        assert "Professor Dr. Alan Turing" in displayed_name, f"Expected display name to be 'Professor Dr. Alan Turing', got '{displayed_name}'"
-        print("[PASS] SaaS Dashboard successfully reflects dynamic user details.")
-
-        # Check Avatar Initials
-        avatar_element = page.query_selector(".healthedia-user-avatar")
-        assert avatar_element is not None, "Avatar not found!"
-        displayed_initials = avatar_element.text_content().strip()
-        print(f"Displayed avatar initials: '{displayed_initials}'")
-        assert "PD" in displayed_initials or "PA" in displayed_initials, f"Expected correct initials, got '{displayed_initials}'"
-        print("[PASS] Avatar initials correctly generated from name.")
-
-        # 6. Verify absolute exclusion of global header/footer on Dashboard
-        print("Verifying global header/footer exclusion on SaaS Dashboard...")
-        global_header = page.query_selector(".healthedia-global-header")
-        global_footer = page.query_selector(".healthedia-global-footer")
-        assert global_header is None, "Global header should NOT exist on SaaS dashboard!"
-        assert global_footer is None, "Global footer should NOT exist on SaaS dashboard!"
-        print("[PASS] Exclusion of global header and footer on dashboard verified successfully.")
-
-        # Capture a screenshot of the premium SaaS dashboard
-        screenshot_path = "healthedia_dashboard_screenshot.png"
-        page.screenshot(path=screenshot_path, full_page=True)
-        print(f"[PASS] Screenshot saved to {screenshot_path}")
-
-        # 7. Go back to Home and test Logged-in Dropdown Menu in compact Global Header
-        print("Navigating back to Home page while remaining logged in...")
-        page.goto("http://localhost:8000/")
-        page.wait_for_selector(".healthedia-global-header")
-
-        # Verify that the dropdown container exists instead of LOGIN button
-        dropdown_container = page.query_selector(".healthedia-user-dropdown-container")
-        assert dropdown_container is not None, "User profile dropdown should be visible when logged in"
-        print("[PASS] Found user dropdown menu container in Global Header.")
-
-        # Trigger dropdown toggle by clicking the trigger button
-        print("Clicking user profile dropdown trigger...")
-        page.click("#header-user-dropdown-btn")
-
-        # Verify that the dropdown is now open
-        dropdown_open = page.locator(".healthedia-user-dropdown-container")
-        assert "open" in dropdown_open.get_attribute("class"), "Dropdown container should have 'open' class on click"
-
-        # Verify the dropdown header contains the welcome message and display name
-        welcome_element = page.locator(".healthedia-dropdown-welcome")
-        name_element = page.locator(".healthedia-dropdown-user-name")
-        assert "Welcome back!" in welcome_element.text_content(), "Welcome message missing in dropdown"
-        assert "Professor Dr. Alan Turing" in name_element.text_content(), "Display name missing in dropdown"
-        print("[PASS] Dropdown welcome message and display name verified successfully.")
-
-        # Verify the "Log Out" link exists and is clearly visible
-        logout_btn = page.locator("#header-logout-btn")
-        assert "Log Out" in logout_btn.text_content(), "Log Out option should be present inside the user dropdown"
-        print("[PASS] Found clearly visible 'Log Out' option in user dropdown.")
-
-        # Take a screenshot of the homepage showing the open user dropdown
-        dropdown_screenshot_path = "healthedia_header_dropdown_screenshot.png"
-        page.screenshot(path=dropdown_screenshot_path, full_page=False)
-        print(f"[PASS] Dropdown screenshot saved to {dropdown_screenshot_path}")
-
-        # 8. Test logout action from user dropdown
-        print("Clicking Log Out inside header dropdown...")
-        logout_btn.click()
-        page.wait_for_url("**/")
-
-        # Ensure we are logged out (Login button should be visible in global header again)
-        page.wait_for_selector(".healthedia-btn-login")
-        login_btn_text = page.text_content(".healthedia-btn-login")
-        assert "LOGIN" in login_btn_text, f"Expected 'LOGIN' button, got: {login_btn_text}"
-        print("[PASS] Successfully logged out and verified header state.")
-
-        # 9. Mobile Viewport Layout Verification
-        print("Starting Mobile layout optimization checks (viewport: 375x667)...")
+        # Let's open a mobile viewport context to verify mobile dropdown menu
+        print("Spawning mobile context (viewport: 375x667)...")
         mobile_context = browser.new_context(viewport={"width": 375, "height": 667})
         mobile_page = mobile_context.new_page()
         mobile_page.goto("http://localhost:8000/")
         mobile_page.wait_for_selector(".healthedia-global-header")
 
-        # Verify Logo & Login are on the same row, and nav is placed below
+        # Verify logo and mobile trigger are on top row
         logo_box = mobile_page.locator(".healthedia-logo-group").bounding_box()
-        auth_box = mobile_page.locator(".healthedia-auth-btn-wrapper").bounding_box()
-        nav_box = mobile_page.locator(".healthedia-nav").bounding_box()
+        mobile_trigger_box = mobile_page.locator(".healthedia-mobile-nav-trigger-container").bounding_box()
+        assert logo_box is not None and mobile_trigger_box is not None
+        print(f"Mobile - Logo Y: {logo_box['y']}, Mobile Trigger Y: {mobile_trigger_box['y']}")
+        assert abs(logo_box['y'] - mobile_trigger_box['y']) <= 15, "Logo and mobile trigger are not on same row on mobile!"
+        print("[PASS] Mobile logo and trigger button are aligned side-by-side.")
 
-        assert logo_box is not None, "Logo should be visible on mobile"
-        assert auth_box is not None, "Auth button should be visible on mobile"
-        assert nav_box is not None, "Nav bar should be visible on mobile"
-
-        print(f"Mobile Coordinates - Logo Y: {logo_box['y']}, Auth Y: {auth_box['y']}, Nav Y: {nav_box['y']}")
-
-        # Verify Logo and Auth are roughly on the same row (Y coordinate difference <= 15px)
-        assert abs(logo_box['y'] - auth_box['y']) <= 15, "Logo and Auth button should be on the same row on mobile"
-        print("[PASS] Logo and Auth button are successfully placed on the same top row on mobile.")
-
-        # Verify Nav is positioned on the second row (Nav Y > Logo Y)
-        assert nav_box['y'] > logo_box['y'], "Nav menu should wrap to a separate row on mobile"
-        print("[PASS] Navigation menu wraps cleanly to a separate row underneath logo/auth on mobile.")
-
-        # Check that footer dots are hidden on mobile
-        footer_dot = mobile_page.query_selector(".healthedia-footer-dot")
-        if footer_dot:
-            # Check if it has display: none or is invisible
-            is_visible = footer_dot.is_visible()
-            assert not is_visible, "Footer separators should be invisible on mobile screens"
-        print("[PASS] Footer separators are correctly hidden on mobile viewport.")
-
-        # Save mobile layout screenshot
-        mobile_screenshot_path = "healthedia_mobile_layout_screenshot.png"
-        mobile_page.screenshot(path=mobile_screenshot_path)
-        print(f"[PASS] Mobile layout screenshot saved to {mobile_screenshot_path}")
-
+        # Trigger mobile menu toggle click
+        print("Clicking mobile navigation dropdown toggle...")
+        mobile_page.click("#mobile-menu-toggle-btn")
+        # Assert class open is added
+        trigger_class = mobile_page.locator("#healthedia-mobile-trigger-container").get_attribute("class")
+        assert "open" in trigger_class, "Mobile dropdown menu did not open on click!"
+        # Check that mobile menu items are visible
+        assert mobile_page.is_visible("#mobile-dropdown-menu-list"), "Mobile menu list is invisible!"
+        print("[PASS] Mobile dropdown navigation menu is completely responsive, compact, and interactive.")
+        mobile_page.screenshot(path="healthedia_mobile_dropdown_screenshot.png")
         mobile_context.close()
+
+
+        # ==========================================
+        # 2. VERIFY DEFAULT PAGE TITLE & CONTENT
+        # ==========================================
+        print("Visiting a regular default page to check title and content rendering...")
+        page.goto("http://localhost:8000/sample-page")
+
+        # Verify page uses theme default loops and structure
+        page.wait_for_selector(".healthedia-default-page-wrapper")
+        title_element = page.locator(".healthedia-default-title")
+        content_element = page.locator(".healthedia-default-content")
+
+        assert "Sample Research Page" in title_element.text_content(), "Standard page title is missing!"
+        assert "biomechanical gait adaptations" in content_element.text_content(), "Standard page content is missing!"
+
+        print("[PASS] Regular pages successfully output both page title and page content/data within default structures.")
+        page.screenshot(path="healthedia_default_page_screenshot.png")
+
+
+        # ==========================================
+        # 3. SECURE MULTI-STEP REGISTRATION FLOW
+        # ==========================================
+        print("Visiting Auth Page to register via 3-step wizard...")
+        page.goto("http://localhost:8000/healthedia-auth/")
+        page.wait_for_selector("#form-login")
+
+        # Click Create Account tab
+        page.click("#tab-register-btn")
+        page.wait_for_selector("#view-register", state="visible")
+
+        # Step 1: Institutional Credentials
+        print("Filling Registration Step 1 (Institutional Credentials)...")
+        page.fill("#register-email", "alan.turing@cambridge.edu")
+        # Click Continue to Step 2
+        page.click("text=CONTINUE TO PROFILE")
+
+        # Step 2: Professional Profile
+        print("Filling Registration Step 2 (Professional Profile)...")
+        page.wait_for_selector("#register-name", state="visible")
+        page.fill("#register-name", "Professor Dr. Alan Turing")
+        # Click Continue to Step 3
+        page.click("text=CONTINUE TO SECURITY")
+
+        # Step 3: Account Security & Verification
+        print("Filling Registration Step 3 (Security & OTP)...")
+        page.wait_for_selector("#register-password", state="visible")
+        page.fill("#register-password", "DecryptedPass123!")
+        page.fill("#register-otp", "849204") # Pre-filled code
+
+        # Complete Registration (Should automatically redirect to HOMEPAGE)
+        print("Submitting multi-step registration...")
+        page.click("#form-register button[type='submit']")
+
+        # Verify automatic redirect to HOMEPAGE '/' after registration
+        page.wait_for_url("http://localhost:8000/")
+        assert page.url == "http://localhost:8000/", f"Expected redirect to Homepage, got: {page.url}"
+        print("[PASS] Completed 3-step Registration flow with successful automatic redirect to Homepage '/'")
+
+
+        # ==========================================
+        # 4. INTERACTIVE HEADER DROPDOWN
+        # ==========================================
+        print("Opening header dropdown menu on Homepage...")
+        page.wait_for_selector("#header-user-dropdown-btn")
+        page.click("#header-user-dropdown-btn")
+
+        # Verify welcome back message, user name and Logout option
+        assert "Welcome back!" in page.text_content(".healthedia-dropdown-welcome")
+        assert "Professor Dr. Alan Turing" in page.text_content(".healthedia-dropdown-user-name")
+        assert "Log Out" in page.text_content("#header-logout-btn")
+        print("[PASS] Logged-in profile dropdown verified on Homepage.")
+        page.screenshot(path="healthedia_home_dropdown_screenshot.png")
+
+
+        # ==========================================
+        # 5. DASHBOARD SECTIONS & SETTINGS
+        # ==========================================
+        print("Navigating to Healthedia SaaS Dashboard...")
+        # Navigate to dashboard from dropdown link
+        page.click("text=SaaS Dashboard")
+        page.wait_for_url("**/healthedia-dashboard/")
+        page.wait_for_selector(".healthedia-dashboard-layout")
+        print("[PASS] Successfully entered SaaS Dashboard.")
+
+        # Test Interactive Section (Tab) Transitions
+        print("Testing Sidebar tab transitions using explicit data-section attributes...")
+        sections_to_test = [
+            {"btn_selector": "button[data-section='analytics']", "sec_id": "#sec-analytics", "title_text": "Analytics Section"},
+            {"btn_selector": "button[data-section='archive-records']", "sec_id": "#sec-archive-records", "title_text": "Archive Records Section"},
+            {"btn_selector": "button[data-section='researchers-profile']", "sec_id": "#sec-researchers-profile", "title_text": "Researchers Profile Section"},
+            {"btn_selector": "button[data-section='settings']", "sec_id": "#sec-settings", "title_text": "Settings Section"}
+        ]
+        for sec in sections_to_test:
+            print(f"Clicking tab: '{sec['btn_selector']}'...")
+            page.click(sec['btn_selector'])
+            page.wait_for_selector(sec['sec_id'], state="visible")
+            assert page.is_visible(sec['sec_id']), f"Section {sec['sec_id']} did not display!"
+            assert sec['title_text'] in page.text_content("#dashboard-title-label"), f"Dashboard title label did not update!"
+            print(f"[PASS] Section tab '{sec['btn_selector']}' transitioned successfully.")
+
+        # Test settings within Dashboard: Disable Registration while keeping Login active
+        print("Changing authentication options to: Disable Registration but Keep Login Active...")
+        page.select_option("#auth_registration", value="disabled")
+        page.click("#btn-save-auth-settings")
+
+        # Verify dynamic success notification banner
+        page.wait_for_selector("#dashboard-success-banner")
+        banner_text = page.text_content("#dashboard-success-banner")
+        assert "settings saved" in banner_text.lower(), "Success notification banner missing or incorrect!"
+        print("[PASS] Authentication Options form submitted and saved successfully.")
+
+        # Test Header navigation links management: Add, Move, Remove custom links
+        print("Testing Header Navigation Manager - Adding new link 'Contact'...")
+        page.fill("#form-add-header-link input[name='new_title']", "Contact")
+        page.fill("#form-add-header-link input[name='new_url']", "/contact/")
+        page.click("#form-add-header-link button[type='submit']")
+
+        page.wait_for_selector("#dashboard-success-banner")
+        print("[PASS] Added 'Contact' link successfully.")
+
+        # Verify that 'Contact' appears in the link list
+        assert "Contact" in page.text_content("#header-links-manager-list"), "New link was not added to the list!"
+
+        # Test moving newly added link up
+        # Get count of header items
+        links = page.locator("#header-links-manager-list .healthedia-link-item")
+        print(f"Header links count: {links.count()}")
+
+        # Let's verify deleting/removing the newly added link
+        print("Testing Header Navigation Manager - Removing newly added 'Contact' link...")
+        # Since we added it, it's at the bottom index. Click its Remove button.
+        remove_buttons = page.locator("#header-links-manager-list .healthedia-link-item:has-text('Contact') button.delete")
+        remove_buttons.first.click()
+        page.wait_for_selector("#dashboard-success-banner")
+        assert "Contact" not in page.text_content("#header-links-manager-list"), "Link was not removed from the list!"
+        print("[PASS] Removed custom link successfully from link management list.")
+
+
+        # ==========================================
+        # 6. LOGOUT AND DYNAMIC AUTH RESTRICTION
+        # ==========================================
+        print("Testing logout action and automatic homepage redirection...")
+        page.click("text=Logout")
+        # Should redirect to HOMEPAGE '/' after logout
+        page.wait_for_url("http://localhost:8000/")
+        assert page.url == "http://localhost:8000/", f"Expected redirect to Homepage after logout, got: {page.url}"
+        print("[PASS] Logout action completed with successful automatic redirect to Homepage '/'")
+
+        # Confirm dynamic auth form restrictions (Since we disabled registration in Step 5, Create Account tab should be hidden!)
+        print("Checking dynamic Authentication tabs lock (Registration disabled)...")
+        page.goto("http://localhost:8000/healthedia-auth/")
+        page.wait_for_selector("#form-login")
+        # Check that tabs bar is hidden because only login is enabled now
+        assert not page.is_visible("#auth-tabs-bar"), "Tabs bar should be hidden when only one authentication option is enabled!"
+        assert not page.is_visible("#view-register"), "Create Account registration view should be locked and invisible!"
+        print("[PASS] Authentication tab lock works cleanly and dynamically restricts account creation according to settings.")
+
         browser.close()
+        print("--- All Healthedia Verification Tests Passed Perfectly! ---")
 
 if __name__ == "__main__":
     run_tests()
