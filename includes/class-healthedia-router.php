@@ -36,6 +36,13 @@ function healthedia_template_redirect( $template ) {
         }
     }
 
+    if ( is_page( 'verification' ) ) {
+        $custom_template = HEALTHEDIA_PATH . 'templates/verification.php';
+        if ( file_exists( $custom_template ) ) {
+            return $custom_template;
+        }
+    }
+
     return $template;
 }
 add_filter( 'template_include', 'healthedia_template_redirect', 99 );

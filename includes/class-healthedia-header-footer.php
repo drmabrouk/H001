@@ -1045,7 +1045,7 @@ function healthedia_get_footer() {
     <footer class="healthedia-global-footer">
         <div class="healthedia-footer-container">
             <div class="healthedia-footer-copyright">
-                © 2026 Healthedia. All Rights Reserved. Permanent Open-Access Repository.
+                © 2026 Healthedia. All Rights Reserved. Global Health Archive.
             </div>
             <div class="healthedia-footer-links">
                 ' . $footer_links_html . '
