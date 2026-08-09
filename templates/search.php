@@ -16,11 +16,11 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 20px; /* Reduced vertical padding */
+            padding: 10px 20px; /* Reduced vertical padding */
             max-width: 900px;
             margin: 0 auto;
             box-sizing: border-box;
-            min-height: calc(100vh - 120px); /* Fill remaining viewport space nicely */
+            min-height: calc(100vh - 240px); /* Fill remaining viewport space nicely without causing scroll */
         }
 
         .healthedia-search-title {

@@ -16,12 +16,16 @@ function healthedia_handle_profile_update() {
             if ( isset( $_POST['healthedia_auth_nonce'] ) && wp_verify_nonce( $_POST['healthedia_auth_nonce'], 'healthedia_auth_action' ) ) {
                 $current_user = wp_get_current_user();
                 if ( $current_user->ID > 0 ) {
-                    $new_name = sanitize_text_field( $_POST['display_name'] );
+                    $first_name = sanitize_text_field( $_POST['first_name'] );
+                    $last_name = sanitize_text_field( $_POST['last_name'] );
+                    $new_name = $first_name . ' ' . $last_name;
                     $new_email = sanitize_email( $_POST['user_email'] );
 
                     // Update main user details
                     wp_update_user([
                         'ID' => $current_user->ID,
+                        'first_name' => $first_name,
+                        'last_name' => $last_name,
                         'display_name' => $new_name,
                         'user_email' => $new_email,
                     ]);
@@ -35,7 +39,12 @@ function healthedia_handle_profile_update() {
                     update_user_meta( $current_user->ID, 'healthedia_country', sanitize_text_field( $_POST['country'] ) );
                     update_user_meta( $current_user->ID, 'healthedia_gender', sanitize_text_field( $_POST['gender'] ) );
                     update_user_meta( $current_user->ID, 'healthedia_dob', sanitize_text_field( $_POST['dob'] ) );
-                    update_user_meta( $current_user->ID, 'healthedia_profile_pic', sanitize_text_field( $_POST['profile_pic'] ) );
+
+                    // Handle Profile picture File Upload
+                    if ( isset( $_FILES['profile_pic'] ) && ! empty( $_FILES['profile_pic']['name'] ) ) {
+                        $profile_pic_url = '/uploads/' . sanitize_file_name( $_FILES['profile_pic']['name'] );
+                        update_user_meta( $current_user->ID, 'healthedia_profile_pic', $profile_pic_url );
+                    }
 
                     // Force redirect to refresh state!
                     wp_safe_redirect( $_SERVER['REQUEST_URI'] );
@@ -99,6 +108,14 @@ function healthedia_get_header() {
     if ( is_user_logged_in() ) {
         $current_user = wp_get_current_user();
         $display_name = ! empty( $current_user->display_name ) ? $current_user->display_name : 'Researcher';
+        $first_name = $current_user->first_name;
+        if ( empty( $first_name ) ) {
+            $first_name = get_user_meta( $current_user->ID, 'first_name', true );
+        }
+        $last_name = $current_user->last_name;
+        if ( empty( $last_name ) ) {
+            $last_name = get_user_meta( $current_user->ID, 'last_name', true );
+        }
 
         // Calculate initials for dropdown trigger avatar
         $initials = '';
@@ -163,33 +180,40 @@ function healthedia_get_header() {
                     <div class="healthedia-wizard-indicator-dot" id="modal-dot-4">4</div>
                 </div>
 
-                <form id="healthedia-edit-account-form" method="POST">
+                <form id="healthedia-edit-account-form" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="healthedia_auth_nonce" value="' . esc_attr( wp_create_nonce( 'healthedia_auth_action' ) ) . '">
                     <input type="hidden" name="healthedia_action" value="update_profile">
 
                     <!-- STEP 1: Personal Profile Info -->
                     <div class="healthedia-modal-fieldset active" id="modal-fieldset-1">
                         <div class="healthedia-modal-form-grid">
-                            <div class="healthedia-form-row">
-                                <label class="healthedia-form-label">Full Name</label>
-                                <input type="text" name="display_name" class="healthedia-input-field" value="' . esc_attr( $display_name ) . '" required id="edit-display-name">
-                            </div>
-                            <div class="healthedia-form-row">
-                                <label class="healthedia-form-label">Username</label>
-                                <input type="text" name="user_nicename" class="healthedia-input-field" value="' . esc_attr( isset($current_user->user_login) ? $current_user->user_login : "" ) . '" required id="edit-user-nicename">
-                            </div>
-                            <div class="healthedia-form-row" style="display: flex; gap: 12px;">
+                            <div class="healthedia-form-row" style="display: flex !important; flex-direction: row !important; gap: 12px !important;">
                                 <div style="flex:1;">
-                                    <label class="healthedia-form-label">Gender</label>
+                                    <input type="text" name="first_name" class="healthedia-input-field" value="' . esc_attr( $first_name ) . '" required id="edit-first-name" placeholder="First Name">
+                                </div>
+                                <div style="flex:1;">
+                                    <input type="text" name="last_name" class="healthedia-input-field" value="' . esc_attr( $last_name ) . '" required id="edit-last-name" placeholder="Last Name">
+                                </div>
+                            </div>
+                            <div class="healthedia-form-row" style="display: flex !important; flex-direction: row !important; gap: 12px !important;">
+                                <div style="flex:1;">
+                                    <input type="text" name="user_nicename" class="healthedia-input-field" value="' . esc_attr( isset($current_user->user_login) ? $current_user->user_login : "" ) . '" required id="edit-user-nicename" placeholder="Username">
+                                </div>
+                                <div style="flex:1;">
+                                    <input type="email" name="user_email" class="healthedia-input-field" value="' . esc_attr( isset($current_user->user_email) ? $current_user->user_email : "" ) . '" required id="edit-user-email" placeholder="Email Address">
+                                </div>
+                            </div>
+                            <div class="healthedia-form-row" style="display: flex !important; flex-direction: row !important; gap: 12px !important;">
+                                <div style="flex:1;">
                                     <select name="gender" class="healthedia-select-input" style="width:100%;" id="edit-gender">
+                                        <option value="" disabled>Select Gender</option>
                                         <option value="male" ' . selected( get_user_meta($current_user->ID, "healthedia_gender", true), "male", false ) . '>Male</option>
                                         <option value="female" ' . selected( get_user_meta($current_user->ID, "healthedia_gender", true), "female", false ) . '>Female</option>
                                         <option value="other" ' . selected( get_user_meta($current_user->ID, "healthedia_gender", true), "other", false ) . '>Other</option>
                                     </select>
                                 </div>
                                 <div style="flex:1;">
-                                    <label class="healthedia-form-label">Date of Birth</label>
-                                    <input type="date" name="dob" class="healthedia-input-field" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_dob", true ) ) . '" id="edit-dob">
+                                    <input type="date" name="dob" class="healthedia-input-field" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_dob", true ) ) . '" id="edit-dob" placeholder="Date of Birth">
                                 </div>
                             </div>
                         </div>
@@ -200,8 +224,7 @@ function healthedia_get_header() {
                     <div class="healthedia-modal-fieldset" id="modal-fieldset-2" style="display:none;">
                         <div class="healthedia-modal-form-grid">
                             <div class="healthedia-form-row">
-                                <label class="healthedia-form-label">Profile Picture URL</label>
-                                <input type="text" name="profile_pic" class="healthedia-input-field" placeholder="e.g. http://..." value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_profile_pic", true ) ) . '" id="edit-profile-pic">
+                                <input type="file" name="profile_pic" class="healthedia-input-field" accept="image/*" id="edit-profile-pic" style="padding-top: 10px;">
                                 <p class="healthedia-guidance-note" style="font-size: 11px; color: #666666; margin-top: 8px; line-height: 1.4; font-style: italic; font-weight: 500;">
                                     Guidance Note: We recommend uploading a professional photo with a white background for official institutional indexing.
                                 </p>
@@ -209,54 +232,44 @@ function healthedia_get_header() {
                         </div>
                         <div class="healthedia-wizard-actions" style="margin-top:20px;">
                             <button type="button" class="healthedia-auth-btn-secondary" onclick="prevModalStep(1)" style="padding:14px 0;">BACK</button>
-                            <button type="button" class="healthedia-auth-submit" onclick="nextModalStep(3)" style="padding:14px 0;" id="modal-next-2">CONTINUE TO PROFESSIONAL</button>
+                            <button type="button" class="healthedia-auth-submit" onclick="nextModalStep(3)" style="padding:14px 0;" id="modal-next-2">CONTINUE TO CONTACT</button>
                         </div>
                     </div>
 
-                    <!-- STEP 3: Professional Credentials Details -->
+                    <!-- STEP 3: Contact Information -->
                     <div class="healthedia-modal-fieldset" id="modal-fieldset-3" style="display:none;">
                         <div class="healthedia-modal-form-grid">
                             <div class="healthedia-form-row">
-                                <label class="healthedia-form-label">Workplace / Institution</label>
-                                <input type="text" name="workplace" class="healthedia-input-field" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_workplace", true ) ) . '" required id="edit-workplace">
-                            </div>
-                            <div class="healthedia-form-row" style="display: flex; gap: 12px;">
-                                <div style="flex:1;">
-                                    <label class="healthedia-form-label">Academic Degree</label>
-                                    <input type="text" name="degree" class="healthedia-input-field" placeholder="e.g. Ph.D." value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_degree", true ) ) . '" id="edit-degree">
-                                </div>
-                                <div style="flex:1;">
-                                    <label class="healthedia-form-label">Professional Title</label>
-                                    <input type="text" name="title" class="healthedia-input-field" placeholder="e.g. Professor" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_title", true ) ) . '" id="edit-title">
-                                </div>
-                            </div>
-                            <div class="healthedia-form-row" style="display: flex; gap: 12px;">
-                                <div style="flex:1;">
-                                    <label class="healthedia-form-label">Nationality</label>
-                                    <input type="text" name="nationality" class="healthedia-input-field" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_nationality", true ) ) . '" id="edit-nationality">
-                                </div>
-                                <div style="flex:1;">
-                                    <label class="healthedia-form-label">Country of Residence</label>
-                                    <input type="text" name="country" class="healthedia-input-field" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_country", true ) ) . '" id="edit-country">
-                                </div>
+                                <input type="text" name="phone" class="healthedia-input-field" placeholder="Phone Number (e.g. +44 1234 567890)" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_phone", true ) ) . '" id="edit-phone">
                             </div>
                         </div>
                         <div class="healthedia-wizard-actions" style="margin-top:20px;">
                             <button type="button" class="healthedia-auth-btn-secondary" onclick="prevModalStep(2)" style="padding:14px 0;">BACK</button>
-                            <button type="button" class="healthedia-auth-submit" onclick="nextModalStep(4)" style="padding:14px 0;" id="modal-next-3">CONTINUE TO CONTACT</button>
+                            <button type="button" class="healthedia-auth-submit" onclick="nextModalStep(4)" style="padding:14px 0;" id="modal-next-3">CONTINUE TO PROFESSIONAL</button>
                         </div>
                     </div>
 
-                    <!-- STEP 4: Contact Information -->
+                    <!-- STEP 4: Professional Credentials Details (arranged in two-column layout) -->
                     <div class="healthedia-modal-fieldset" id="modal-fieldset-4" style="display:none;">
                         <div class="healthedia-modal-form-grid">
-                            <div class="healthedia-form-row">
-                                <label class="healthedia-form-label">Email Address</label>
-                                <input type="email" name="user_email" class="healthedia-input-field" value="' . esc_attr( isset($current_user->user_email) ? $current_user->user_email : "" ) . '" required id="edit-user-email">
+                            <div class="healthedia-form-row" style="display: flex !important; flex-direction: row !important; gap: 12px !important;">
+                                <div style="flex:1;">
+                                    <input type="text" name="workplace" class="healthedia-input-field" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_workplace", true ) ) . '" placeholder="Workplace / Institution" required id="edit-workplace">
+                                </div>
+                                <div style="flex:1;">
+                                    <input type="text" name="degree" class="healthedia-input-field" placeholder="Academic Degree (e.g. Ph.D.)" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_degree", true ) ) . '" id="edit-degree">
+                                </div>
+                            </div>
+                            <div class="healthedia-form-row" style="display: flex !important; flex-direction: row !important; gap: 12px !important;">
+                                <div style="flex:1;">
+                                    <input type="text" name="title" class="healthedia-input-field" placeholder="Professional Title (e.g. Professor)" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_title", true ) ) . '" id="edit-title">
+                                </div>
+                                <div style="flex:1;">
+                                    <input type="text" name="nationality" class="healthedia-input-field" placeholder="Nationality" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_nationality", true ) ) . '" id="edit-nationality">
+                                </div>
                             </div>
                             <div class="healthedia-form-row">
-                                <label class="healthedia-form-label">Phone Number</label>
-                                <input type="text" name="phone" class="healthedia-input-field" placeholder="e.g. +44 1234 567890" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_phone", true ) ) . '" id="edit-phone">
+                                <input type="text" name="country" class="healthedia-input-field" placeholder="Country of Residence" value="' . esc_attr( get_user_meta( $current_user->ID, "healthedia_country", true ) ) . '" id="edit-country">
                             </div>
                         </div>
                         <div class="healthedia-wizard-actions" style="margin-top:20px;">
@@ -649,16 +662,28 @@ function healthedia_get_header() {
                 font-size: 12px;
             }
             .healthedia-dropdown-trigger {
-                padding: 4px 10px 4px 4px;
-                gap: 6px;
+                padding: 0 !important;
+                gap: 0 !important;
+                border: none !important;
+                background: none !important;
+                width: 32px !important;
+                height: 32px !important;
+                border-radius: 50% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
             .healthedia-header-avatar {
-                width: 28px;
-                height: 28px;
-                font-size: 10px;
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 11px !important;
+                margin: 0 !important;
             }
             .healthedia-header-user-name {
-                font-size: 11px;
+                display: none !important;
+            }
+            .healthedia-dropdown-chevron {
+                display: none !important;
             }
             .healthedia-dropdown-menu {
                 width: 180px;

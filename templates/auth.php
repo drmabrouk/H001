@@ -558,7 +558,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
                             <div class="healthedia-wizard-indicator-dot" id="dot-step-4">4</div>
                         </div>
 
-                        <form id="form-register" method="POST" style="width: 100%;">
+                        <form id="form-register" method="POST" style="width: 100%;" enctype="multipart/form-data">
                             <?php wp_nonce_field( 'healthedia_auth_action', 'healthedia_auth_nonce' ); ?>
                             <input type="hidden" name="healthedia_action" value="register">
 
@@ -583,7 +583,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
                             <!-- REGISTRATION STEP 2: Profile Picture Guidance Step -->
                             <div class="healthedia-wizard-fieldset" id="fieldset-step-2" style="display: none;">
                                 <div class="healthedia-input-group">
-                                    <input type="text" name="profile_pic" class="healthedia-auth-input" id="register-profile-pic" placeholder="Profile Picture URL (e.g. http://...)" value="<?php echo isset($_POST['profile_pic']) ? esc_attr($_POST['profile_pic']) : ''; ?>">
+                                    <input type="file" name="profile_pic" class="healthedia-auth-input" id="register-profile-pic" accept="image/*" style="padding-top: 14px;">
                                     <p class="healthedia-guidance-note" style="font-size: 11px; color: #666666; margin-top: 8px; line-height: 1.4; font-style: italic; font-weight: 500;">
                                         Guidance Note: We recommend uploading a professional photo with a white background for official institutional indexing.
                                     </p>

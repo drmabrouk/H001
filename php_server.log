@@ -411,3 +411,310 @@
 [Sat Aug  8 06:46:09 2026] [::1]:37312 Closing
 [Sat Aug  8 06:46:13 2026] [::1]:37324 Accepted
 [Sat Aug  8 06:46:13 2026] [::1]:37324 Closing
+[Sat Aug  8 18:55:10 2026] [::1]:53760 Accepted
+[Sat Aug  8 18:55:10 2026] [::1]:53760 Closing
+[Sat Aug  8 18:55:11 2026] [::1]:53770 Accepted
+[Sat Aug  8 18:55:11 2026] [::1]:53770 Closing
+[Sat Aug  8 18:58:09 2026] [::1]:47112 Accepted
+[Sat Aug  8 18:58:09 2026] [::1]:47112 Closing
+[Sat Aug  8 18:58:10 2026] [::1]:47114 Accepted
+[Sat Aug  8 18:58:11 2026] [::1]:47114 Closing
+[Sun Aug  9 03:51:30 2026] [::1]:42954 Accepted
+[Sun Aug  9 03:51:30 2026] [::1]:42954 Closing
+[Sun Aug  9 03:51:30 2026] [::1]:42960 Accepted
+[Sun Aug  9 03:51:30 2026] [::1]:42960 Closing
+[Sun Aug  9 03:51:30 2026] [::1]:42976 Accepted
+[Sun Aug  9 03:51:30 2026] [::1]:42976 Closing
+[Sun Aug  9 03:51:30 2026] [::1]:42984 Accepted
+[Sun Aug  9 03:51:30 2026] [::1]:42984 Closing
+[Sun Aug  9 03:51:32 2026] [::1]:43000 Accepted
+[Sun Aug  9 03:51:32 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 03:51:32 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 03:51:32 2026] [::1]:43000 Closing
+[Sun Aug  9 03:51:32 2026] [::1]:43002 Accepted
+[Sun Aug  9 03:51:32 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 03:51:32 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 03:51:32 2026] [::1]:43002 Closing
+[Sun Aug  9 03:51:32 2026] [::1]:43008 Accepted
+[Sun Aug  9 03:51:32 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 03:51:32 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 03:51:32 2026] [::1]:43008 Closing
+[Sun Aug  9 03:51:32 2026] [::1]:43022 Accepted
+[Sun Aug  9 03:51:32 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 03:51:32 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 03:51:32 2026] [::1]:43022 Closing
+[Sun Aug  9 03:51:32 2026] [::1]:43028 Accepted
+[Sun Aug  9 03:51:32 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 03:51:32 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 03:51:32 2026] [::1]:43028 Closing
+[Sun Aug  9 03:55:18 2026] [::1]:53830 Accepted
+[Sun Aug  9 03:55:18 2026] [::1]:53830 Closing
+[Sun Aug  9 03:55:18 2026] [::1]:53840 Accepted
+[Sun Aug  9 03:55:18 2026] [::1]:53840 Closing
+[Sun Aug  9 03:55:18 2026] [::1]:53844 Accepted
+[Sun Aug  9 03:55:18 2026] [::1]:53844 Closing
+[Sun Aug  9 03:55:18 2026] [::1]:53858 Accepted
+[Sun Aug  9 03:55:18 2026] [::1]:53858 Closing
+[Sun Aug  9 03:55:19 2026] [::1]:53872 Accepted
+[Sun Aug  9 03:55:19 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 03:55:19 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 03:55:19 2026] [::1]:53872 Closing
+[Sun Aug  9 03:55:19 2026] [::1]:53874 Accepted
+[Sun Aug  9 03:55:19 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 03:55:19 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 03:55:19 2026] [::1]:53874 Closing
+[Sun Aug  9 03:55:19 2026] [::1]:53886 Accepted
+[Sun Aug  9 03:55:19 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 03:55:19 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 03:55:19 2026] [::1]:53886 Closing
+[Sun Aug  9 03:55:19 2026] [::1]:53892 Accepted
+[Sun Aug  9 03:55:19 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 03:55:19 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 03:55:19 2026] [::1]:53892 Closing
+[Sun Aug  9 03:55:20 2026] [::1]:53896 Accepted
+[Sun Aug  9 03:55:20 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 03:55:20 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 03:55:20 2026] [::1]:53896 Closing
+[Sun Aug  9 03:55:20 2026] [::1]:53910 Accepted
+[Sun Aug  9 03:55:20 2026] PHP Fatal error:  Uncaught Error: Call to undefined function sanitize_file_name() in /app/includes/class-healthedia-header-footer.php:45
+Stack trace:
+#0 /app/mock-wordpress.php(384): healthedia_handle_profile_update()
+#1 {main}
+  thrown in /app/includes/class-healthedia-header-footer.php on line 45
+[Sun Aug  9 03:55:20 2026] [::1]:53910 Closing
+[Sun Aug  9 04:09:06 2026] [::1]:36346 Accepted
+[Sun Aug  9 04:09:06 2026] [::1]:36346 Closing
+[Sun Aug  9 04:09:06 2026] [::1]:36350 Accepted
+[Sun Aug  9 04:09:06 2026] [::1]:36350 Closing
+[Sun Aug  9 04:09:06 2026] [::1]:36362 Accepted
+[Sun Aug  9 04:09:06 2026] [::1]:36362 Closing
+[Sun Aug  9 04:09:06 2026] [::1]:36366 Accepted
+[Sun Aug  9 04:09:06 2026] [::1]:36366 Closing
+[Sun Aug  9 04:09:07 2026] [::1]:36376 Accepted
+[Sun Aug  9 04:09:07 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:07 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:07 2026] [::1]:36376 Closing
+[Sun Aug  9 04:09:07 2026] [::1]:36380 Accepted
+[Sun Aug  9 04:09:07 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:07 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:07 2026] [::1]:36380 Closing
+[Sun Aug  9 04:09:08 2026] [::1]:36386 Accepted
+[Sun Aug  9 04:09:08 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:08 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:08 2026] [::1]:36386 Closing
+[Sun Aug  9 04:09:08 2026] [::1]:36398 Accepted
+[Sun Aug  9 04:09:08 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:08 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:08 2026] [::1]:36398 Closing
+[Sun Aug  9 04:09:08 2026] [::1]:36404 Accepted
+[Sun Aug  9 04:09:08 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:08 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:08 2026] [::1]:36404 Closing
+[Sun Aug  9 04:09:08 2026] [::1]:36414 Accepted
+[Sun Aug  9 04:09:08 2026] [::1]:36414 Closing
+[Sun Aug  9 04:09:08 2026] [::1]:36420 Accepted
+[Sun Aug  9 04:09:08 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:08 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:08 2026] [::1]:36420 Closing
+[Sun Aug  9 04:09:09 2026] [::1]:36432 Accepted
+[Sun Aug  9 04:09:09 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:09 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:09 2026] [::1]:36432 Closing
+[Sun Aug  9 04:09:09 2026] [::1]:36436 Accepted
+[Sun Aug  9 04:09:09 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:09 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:09 2026] [::1]:36436 Closing
+[Sun Aug  9 04:09:09 2026] [::1]:36438 Accepted
+[Sun Aug  9 04:09:09 2026] [::1]:36438 Closing
+[Sun Aug  9 04:09:10 2026] [::1]:36452 Accepted
+[Sun Aug  9 04:09:10 2026] [::1]:36452 Closing
+[Sun Aug  9 04:09:11 2026] [::1]:36456 Accepted
+[Sun Aug  9 04:09:11 2026] [::1]:36456 Closing
+[Sun Aug  9 04:09:11 2026] [::1]:36472 Accepted
+[Sun Aug  9 04:09:11 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:11 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:11 2026] [::1]:36472 Closing
+[Sun Aug  9 04:09:11 2026] [::1]:36484 Accepted
+[Sun Aug  9 04:09:11 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:11 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:11 2026] [::1]:36484 Closing
+[Sun Aug  9 04:09:11 2026] [::1]:36488 Accepted
+[Sun Aug  9 04:09:11 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:11 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:11 2026] [::1]:36488 Closing
+[Sun Aug  9 04:09:11 2026] [::1]:36504 Accepted
+[Sun Aug  9 04:09:11 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:11 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:11 2026] [::1]:36504 Closing
+[Sun Aug  9 04:09:11 2026] [::1]:36514 Accepted
+[Sun Aug  9 04:09:11 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:11 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:11 2026] [::1]:36514 Closing
+[Sun Aug  9 04:09:12 2026] [::1]:36516 Accepted
+[Sun Aug  9 04:09:12 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:09:12 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:09:12 2026] [::1]:36516 Closing
+[Sun Aug  9 04:09:12 2026] [::1]:36528 Accepted
+[Sun Aug  9 04:09:12 2026] [::1]:36528 Closing
+[Sun Aug  9 04:09:12 2026] [::1]:36534 Accepted
+[Sun Aug  9 04:09:12 2026] [::1]:36534 Closing
+[Sun Aug  9 04:09:12 2026] [::1]:36550 Accepted
+[Sun Aug  9 04:09:12 2026] [::1]:36550 Closing
+[Sun Aug  9 04:09:12 2026] [::1]:36558 Accepted
+[Sun Aug  9 04:09:12 2026] [::1]:36558 Closing
+[Sun Aug  9 04:09:12 2026] [::1]:36570 Accepted
+[Sun Aug  9 04:09:12 2026] [::1]:36570 Closing
+[Sun Aug  9 04:13:05 2026] [::1]:59706 Accepted
+[Sun Aug  9 04:13:05 2026] [::1]:59706 Closing
+[Sun Aug  9 04:13:06 2026] [::1]:59722 Accepted
+[Sun Aug  9 04:13:06 2026] [::1]:59722 Closing
+[Sun Aug  9 04:22:16 2026] [::1]:38376 Accepted
+[Sun Aug  9 04:22:16 2026] [::1]:38376 Closing
+[Sun Aug  9 04:22:17 2026] [::1]:38380 Accepted
+[Sun Aug  9 04:22:17 2026] [::1]:38380 Closing
+[Sun Aug  9 04:22:23 2026] [::1]:38396 Accepted
+[Sun Aug  9 04:22:23 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:22:23 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:22:23 2026] [::1]:38396 Closing
+[Sun Aug  9 04:22:23 2026] [::1]:38398 Accepted
+[Sun Aug  9 04:22:23 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:22:23 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:22:23 2026] [::1]:38398 Closing
+[Sun Aug  9 04:22:24 2026] [::1]:36514 Accepted
+[Sun Aug  9 04:22:24 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:22:24 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:22:24 2026] [::1]:36514 Closing
+[Sun Aug  9 04:22:28 2026] [::1]:36522 Accepted
+[Sun Aug  9 04:22:28 2026] [::1]:36522 Closing
+[Sun Aug  9 04:22:28 2026] [::1]:36536 Accepted
+[Sun Aug  9 04:22:28 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:22:28 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:22:28 2026] [::1]:36536 Closing
+[Sun Aug  9 04:22:29 2026] [::1]:36542 Accepted
+[Sun Aug  9 04:22:29 2026] [::1]:36542 Closing
+[Sun Aug  9 04:22:31 2026] [::1]:36558 Accepted
+[Sun Aug  9 04:22:31 2026] [::1]:36558 Closing
+[Sun Aug  9 04:22:32 2026] [::1]:36574 Accepted
+[Sun Aug  9 04:22:32 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:22:32 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:22:32 2026] [::1]:36574 Closing
+[Sun Aug  9 04:22:32 2026] [::1]:36582 Accepted
+[Sun Aug  9 04:22:32 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:22:32 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:22:32 2026] [::1]:36582 Closing
+[Sun Aug  9 04:35:07 2026] [::1]:47596 Accepted
+[Sun Aug  9 04:35:07 2026] [::1]:47596 Closing
+[Sun Aug  9 04:35:08 2026] [::1]:47608 Accepted
+[Sun Aug  9 04:35:08 2026] [::1]:47608 Closing
+[Sun Aug  9 04:35:08 2026] [::1]:47624 Accepted
+[Sun Aug  9 04:35:08 2026] [::1]:47624 Closing
+[Sun Aug  9 04:35:08 2026] [::1]:47628 Accepted
+[Sun Aug  9 04:35:08 2026] [::1]:47628 Closing
+[Sun Aug  9 04:35:09 2026] [::1]:47640 Accepted
+[Sun Aug  9 04:35:09 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:09 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:09 2026] [::1]:47640 Closing
+[Sun Aug  9 04:35:09 2026] [::1]:47650 Accepted
+[Sun Aug  9 04:35:09 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:09 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:09 2026] [::1]:47650 Closing
+[Sun Aug  9 04:35:09 2026] [::1]:47662 Accepted
+[Sun Aug  9 04:35:09 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:09 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:09 2026] [::1]:47662 Closing
+[Sun Aug  9 04:35:09 2026] [::1]:47666 Accepted
+[Sun Aug  9 04:35:09 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:09 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:09 2026] [::1]:47666 Closing
+[Sun Aug  9 04:35:10 2026] [::1]:47672 Accepted
+[Sun Aug  9 04:35:10 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:10 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:10 2026] [::1]:47672 Closing
+[Sun Aug  9 04:35:10 2026] [::1]:47674 Accepted
+[Sun Aug  9 04:35:10 2026] [::1]:47674 Closing
+[Sun Aug  9 04:35:10 2026] [::1]:47686 Accepted
+[Sun Aug  9 04:35:10 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:10 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:10 2026] [::1]:47686 Closing
+[Sun Aug  9 04:35:10 2026] [::1]:47692 Accepted
+[Sun Aug  9 04:35:10 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:10 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:10 2026] [::1]:47692 Closing
+[Sun Aug  9 04:35:10 2026] [::1]:47702 Accepted
+[Sun Aug  9 04:35:10 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:10 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:10 2026] [::1]:47702 Closing
+[Sun Aug  9 04:35:11 2026] [::1]:47710 Accepted
+[Sun Aug  9 04:35:11 2026] [::1]:47710 Closing
+[Sun Aug  9 04:35:11 2026] [::1]:47712 Accepted
+[Sun Aug  9 04:35:11 2026] [::1]:47712 Closing
+[Sun Aug  9 04:35:12 2026] [::1]:47724 Accepted
+[Sun Aug  9 04:35:12 2026] [::1]:47724 Closing
+[Sun Aug  9 04:35:12 2026] [::1]:47730 Accepted
+[Sun Aug  9 04:35:12 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:12 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:12 2026] [::1]:47730 Closing
+[Sun Aug  9 04:35:12 2026] [::1]:47738 Accepted
+[Sun Aug  9 04:35:12 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:12 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:12 2026] [::1]:47738 Closing
+[Sun Aug  9 04:35:12 2026] [::1]:47754 Accepted
+[Sun Aug  9 04:35:12 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:12 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:12 2026] [::1]:47754 Closing
+[Sun Aug  9 04:35:12 2026] [::1]:47760 Accepted
+[Sun Aug  9 04:35:12 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:12 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:12 2026] [::1]:47760 Closing
+[Sun Aug  9 04:35:12 2026] [::1]:47766 Accepted
+[Sun Aug  9 04:35:12 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:12 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:12 2026] [::1]:47766 Closing
+[Sun Aug  9 04:35:13 2026] [::1]:47778 Accepted
+[Sun Aug  9 04:35:13 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:35:13 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:35:13 2026] [::1]:47778 Closing
+[Sun Aug  9 04:35:13 2026] [::1]:47782 Accepted
+[Sun Aug  9 04:35:13 2026] [::1]:47782 Closing
+[Sun Aug  9 04:35:13 2026] [::1]:47794 Accepted
+[Sun Aug  9 04:35:13 2026] [::1]:47794 Closing
+[Sun Aug  9 04:35:13 2026] [::1]:47796 Accepted
+[Sun Aug  9 04:35:13 2026] [::1]:47796 Closing
+[Sun Aug  9 04:35:13 2026] [::1]:47802 Accepted
+[Sun Aug  9 04:35:13 2026] [::1]:47802 Closing
+[Sun Aug  9 04:35:13 2026] [::1]:47810 Accepted
+[Sun Aug  9 04:35:13 2026] [::1]:47810 Closing
+[Sun Aug  9 04:36:55 2026] [::1]:56078 Accepted
+[Sun Aug  9 04:36:55 2026] [::1]:56078 Closing
+[Sun Aug  9 04:36:56 2026] [::1]:56086 Accepted
+[Sun Aug  9 04:36:56 2026] [::1]:56086 Closing
+[Sun Aug  9 04:37:02 2026] [::1]:56090 Accepted
+[Sun Aug  9 04:37:02 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:37:02 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:37:02 2026] [::1]:56090 Closing
+[Sun Aug  9 04:37:02 2026] [::1]:56104 Accepted
+[Sun Aug  9 04:37:02 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:37:02 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:37:02 2026] [::1]:56104 Closing
+[Sun Aug  9 04:37:04 2026] [::1]:56116 Accepted
+[Sun Aug  9 04:37:04 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:37:04 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:37:04 2026] [::1]:56116 Closing
+[Sun Aug  9 04:37:07 2026] [::1]:59880 Accepted
+[Sun Aug  9 04:37:07 2026] [::1]:59880 Closing
+[Sun Aug  9 04:37:07 2026] [::1]:59894 Accepted
+[Sun Aug  9 04:37:07 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:37:07 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:37:07 2026] [::1]:59894 Closing
+[Sun Aug  9 04:37:08 2026] [::1]:59896 Accepted
+[Sun Aug  9 04:37:08 2026] [::1]:59896 Closing
+[Sun Aug  9 04:37:10 2026] [::1]:59906 Accepted
+[Sun Aug  9 04:37:10 2026] [::1]:59906 Closing
+[Sun Aug  9 04:37:11 2026] [::1]:59908 Accepted
+[Sun Aug  9 04:37:11 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:37:11 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:37:11 2026] [::1]:59908 Closing
+[Sun Aug  9 04:37:11 2026] [::1]:59922 Accepted
+[Sun Aug  9 04:37:11 2026] PHP Warning:  Undefined property: stdClass::$first_name in /app/includes/class-healthedia-header-footer.php on line 111
+[Sun Aug  9 04:37:11 2026] PHP Warning:  Undefined property: stdClass::$last_name in /app/includes/class-healthedia-header-footer.php on line 115
+[Sun Aug  9 04:37:11 2026] [::1]:59922 Closing

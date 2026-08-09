@@ -24,6 +24,10 @@ define( 'ABSPATH', __DIR__ . '/' );
 define( 'DB_NAME', 'mock_wordpress.db' );
 
 // Mock Sanitization
+function sanitize_file_name( $filename ) {
+    return preg_replace( '/[^a-zA-Z0-9_\.-]/', '', $filename );
+}
+
 function sanitize_email( $email ) {
     return filter_var( trim( $email ), FILTER_SANITIZE_EMAIL );
 }

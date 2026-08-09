@@ -158,8 +158,10 @@ def run_tests():
 
         # Wizard Step 1: Personal
         print("Filling Edit Account Wizard Step 1 (Personal details)...")
-        page.fill("#edit-display-name", "Alan Turing, FRS")
+        page.fill("#edit-first-name", "Alan")
+        page.fill("#edit-last-name", "Turing")
         page.fill("#edit-user-nicename", "alanturing")
+        page.fill("#edit-user-email", "alan.turing@cambridge.edu")
         page.select_option("#edit-gender", value="male")
         page.fill("#edit-dob", "1912-06-23")
         page.click("#modal-next-1")
@@ -168,25 +170,27 @@ def run_tests():
         print("Filling Edit Account Wizard Step 2 (Dedicated Profile Picture step)...")
         page.wait_for_selector("#edit-profile-pic", state="visible")
         # Ensure only step 2 is visible
-        assert not page.is_visible("#edit-display-name"), "Step 1 should be hidden!"
+        assert not page.is_visible("#edit-first-name"), "Step 1 should be hidden!"
         assert "professional photo with a white background" in page.text_content(".healthedia-guidance-note"), "Guidance note is missing!"
-        page.fill("#edit-profile-pic", "http://cambridge.edu/alan.png")
+        page.set_input_files("#edit-profile-pic", "dummy_avatar.png")
         page.click("#modal-next-2")
 
-        # Wizard Step 3: Professional Credentials
-        print("Filling Edit Account Wizard Step 3 (Professional Credentials)...")
-        page.wait_for_selector("#edit-workplace", state="visible")
+        # Wizard Step 3: Contact details
+        print("Filling Edit Account Wizard Step 3 (Contact details)...")
+        page.wait_for_selector("#edit-phone", state="visible")
         assert not page.is_visible("#edit-profile-pic"), "Step 2 should be hidden!"
+        page.fill("#edit-phone", "+44 20 8977 3222")
+        page.click("#modal-next-3")
+
+        # Wizard Step 4: Professional Credentials
+        print("Filling Edit Account Wizard Step 4 (Professional Credentials)...")
+        page.wait_for_selector("#edit-workplace", state="visible")
+        assert not page.is_visible("#edit-phone"), "Step 3 should be hidden!"
         page.fill("#edit-workplace", "National Physical Laboratory")
         page.fill("#edit-degree", "Sc.D.")
         page.fill("#edit-title", "Senior Research Fellow")
-        page.click("#modal-next-3")
-
-        # Wizard Step 4: Contact details
-        print("Filling Edit Account Wizard Step 4 (Contact details)...")
-        page.wait_for_selector("#edit-phone", state="visible")
-        assert not page.is_visible("#edit-workplace"), "Step 3 should be hidden!"
-        page.fill("#edit-phone", "+44 20 8977 3222")
+        page.fill("#edit-nationality", "British")
+        page.fill("#edit-country", "United Kingdom")
 
         # Submit the Edit Account form (will refresh page state)
         print("Submitting 4-step Edit Account updates...")
@@ -199,7 +203,7 @@ def run_tests():
         # Verify that the user dropdown shows the newly edited name!
         displayed_trigger_name = page.text_content(".healthedia-header-user-name").strip()
         print(f"Newly displayed trigger name: '{displayed_trigger_name}'")
-        assert displayed_trigger_name == "Alan Turing, FRS", f"Expected updated name, got: {displayed_trigger_name}"
+        assert displayed_trigger_name == "Alan Turing", f"Expected updated name, got: {displayed_trigger_name}"
         print("[PASS] 4-step Edit Account Information wizard successfully saved and refreshed.")
 
 
